@@ -31,11 +31,11 @@ void NachenBlaster::doSomething() {
 				moveTo(getX() - 6, getY());
 			break;
 		case KEY_PRESS_RIGHT:
-			if (getX() + 6 < VIEW_WIDTH)
+			if (getX() + 6 < (VIEW_WIDTH - 1))
 				moveTo(getX() + 6, getY());
 			break;
 		case KEY_PRESS_UP:
-			if (getY() + 6 < VIEW_HEIGHT)
+			if (getY() + 6 < (VIEW_HEIGHT - 1))
 				moveTo(getX(), getY() + 6);
 			break;
 		}
