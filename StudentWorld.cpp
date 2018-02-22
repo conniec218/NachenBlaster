@@ -24,7 +24,7 @@ int StudentWorld::init()
 {
 	nachenblaster = new NachenBlaster(this);
 	for (int i = 0; i < 30; i++) {
-		Star* s = new Star(randInt(0, VIEW_WIDTH), randInt(0, VIEW_HEIGHT), this);
+		Star* s = new Star(randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), this);
 		m_actorList.push_back(s);
 	}
     return GWSTATUS_CONTINUE_GAME;
@@ -39,13 +39,13 @@ int StudentWorld::move()
 			Actor* st = *it;
 			it = m_actorList.erase(it);
 			delete st;
-			cerr << "erase" << endl;
+			//cerr << "erase" << endl;
 		}
 		else
 			it++;
 	}
 	if (randInt(1, 15) == 8)
-		m_actorList.push_back(new Star(VIEW_WIDTH, randInt(0, VIEW_HEIGHT), this));
+		m_actorList.push_back(new Star(VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1), this));
 	//Is this right? (above)
 	nachenblaster->doSomething();
 	//Determines if the object is dead
@@ -60,9 +60,11 @@ int StudentWorld::move()
 void StudentWorld::cleanUp()
 {
 	delete nachenblaster;
+	nachenblaster = nullptr;
 	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end();) {
 		Actor* actor = *it;
 		it = m_actorList.erase(it);
 		delete actor;
+		actor = nullptr;
 	}
 }

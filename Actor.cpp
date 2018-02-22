@@ -2,7 +2,7 @@
 #include "StudentWorld.h"
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
-
+using Direction = int;
 
 Actor::Actor(StudentWorld* s, int imageID, int startX, int startY, Direction dir, double size, unsigned int depth)
 	: GraphObject(imageID, startX, startY, dir, size, depth), m_studentWorld(s) {}
@@ -20,7 +20,7 @@ void NachenBlaster::doSomething() {
 		return;
 	int ch;
 	if(getWorld()->getKey(ch)){
-		std::cerr << "getKey" << std::endl;
+		//std::cerr << "getKey" << std::endl;
 		switch (ch) {
 		case KEY_PRESS_DOWN:
 			if (getY() - 6 >= 0)

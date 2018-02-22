@@ -4,6 +4,7 @@
 #include "GraphObject.h"
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
+using Direction = int;
 class StudentWorld;
 
 class Actor : public GraphObject {
