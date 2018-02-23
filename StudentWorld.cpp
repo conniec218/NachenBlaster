@@ -65,6 +65,5 @@ void StudentWorld::cleanUp()
 		Actor* actor = *it;
 		it = m_actorList.erase(it);
 		delete actor;
-		actor = nullptr;
 	}
 }
