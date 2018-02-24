@@ -5,11 +5,15 @@
 using Direction = int;
 
 Actor::Actor(StudentWorld* s, int imageID, int startX, int startY, Direction dir, double size, unsigned int depth)
-	: GraphObject(imageID, startX, startY, dir, size, depth), m_studentWorld(s) {}
+	: GraphObject(imageID, startX, startY, dir, size, depth), m_studentWorld(s), m_isAlive(true) {}
 
 
 StudentWorld* Actor::getWorld() {
 	return m_studentWorld;
+}
+
+bool Actor::isAlive() const {
+	return m_isAlive;
 }
 
 NachenBlaster::NachenBlaster(StudentWorld* s)
@@ -43,6 +47,11 @@ void NachenBlaster::doSomething() {
 	return;
 }
 
+//Dummy function
+bool NachenBlaster::setAlive() {
+	return true;
+}
+
 Star::Star(int startX, int startY, StudentWorld* s)
 	: Actor(s, IID_STAR, startX, startY, 0, randInt(5, 50) * .01, 3) {}
 
@@ -50,7 +59,28 @@ void Star::doSomething() {
 	moveTo(getX() - 1, getY());
 }
 
-/*bool Star::isAlive() {
-	;
-}*/
+//Dummy function
+bool Star::setAlive() {
+	return true;
+}
+
+Alien::Alien(double travelSpeed, int flightLength, int xDirection, int yDirection, int IMAGE_ID)
+	: Actor() {}
+
+void Alien::doSomething() {
+	//For smoregon/smallgon
+}
+
+void Alien::flightPlan(int &x, int& y) {
+	x = m_xDirection;
+	y = m_yDirection;
+}
+
+double Alien::travelSpeed() {
+	return m_travelSpeed;
+}
+
+int Alien::flightLength() {
+	return m_flightLength;
+}
 
