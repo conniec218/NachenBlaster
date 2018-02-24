@@ -64,7 +64,7 @@ bool Star::setAlive() {
 	return true;
 }
 
-Alien::Alien(double travelSpeed, int flightLength, int xDirection, int yDirection, int IMAGE_ID)
+Alien::Alien(double travelSpeed, int flightLength, int IMAGE_ID, int xDirection, int yDirection)
 	: Actor() {}
 
 void Alien::doSomething() {

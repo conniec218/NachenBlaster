@@ -27,6 +27,10 @@ int StudentWorld::init()
 		Star* s = new Star(randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), this);
 		m_actorList.push_back(s);
 	}
+	//create a new alien! dummy function
+	if (createAlien())
+		m_actorList.push_back(createNewAlien());
+
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -66,4 +70,14 @@ void StudentWorld::cleanUp()
 		it = m_actorList.erase(it);
 		delete actor;
 	}
+}
+
+//Dummy function
+bool StudentWorld::createAlien() {
+	return true;
+}
+
+Alien* createNewAlien() {
+	Smallgon* small = new Smallgon(); //Constructor!
+	return small;
 }
