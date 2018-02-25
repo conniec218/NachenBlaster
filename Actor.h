@@ -13,7 +13,7 @@ public:
 	void virtual doSomething() = 0;
 	StudentWorld* getWorld();
 	bool isAlive() const;
-	bool virtual setAlive() = 0;
+	bool setAlive(bool alive);
 private:
 	StudentWorld* m_studentWorld; 
 	bool m_isAlive;
@@ -23,7 +23,6 @@ class NachenBlaster : public Actor {
 public:
 	NachenBlaster(StudentWorld* s);
 	void doSomething();
-	bool setAlive();
 private:
 	int m_hitPoints;
 	int m_cabbagePoints;
@@ -34,7 +33,6 @@ class Star : public Actor {
 public:
 	Star(int startX, int startY, StudentWorld* s);
 	void doSomething();
-	bool setAlive();
 };
 
 class Alien : public Actor {
@@ -42,9 +40,10 @@ public:
 	Alien(StudentWorld* s, double travelSpeed, int flightLength, int IMAGE_ID, int xDirection = -1, int yDirection = 0); 
 	void virtual doSomething(); 
 	void flightPlan(int &x, int& y); 
-	double travelSpeed();
-	int flightLength();
-	bool setAlive();
+	double travelSpeed() const;
+	int flightLength() const;
+	bool needsNewFlightPlan();
+	void virtual setNewFlightPlan();
 private:
 	double m_travelSpeed;
 	int m_flightLength;

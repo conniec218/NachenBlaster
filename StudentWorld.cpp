@@ -38,19 +38,27 @@ int StudentWorld::init()
 int StudentWorld::move()
 {
 	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end();) {
-		(*(*it)).doSomething();
-		if ((*(*it)).getX() < 0) {  //isAlive
+		if ((*(*it)).isAlive()) {
+			(*(*it)).doSomething();
+			it++;
+		}
+		else {
+			Actor* st = *it;
+			it = m_actorList.erase(it);
+			delete st;
+		}
+		/*if ((*(*it)).getX() < 0) {  //isAlive
 			Actor* st = *it;
 			it = m_actorList.erase(it);
 			delete st;
 			//cerr << "erase" << endl;
 		}
 		else
-			it++;
+			it++;*/
 	}
 	if (randInt(1, 15) == 8)
 		m_actorList.push_back(new Star(VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1), this));
-	//Is this right? (above)
+
 	nachenblaster->doSomething();
 	//Determines if the object is dead
 	
