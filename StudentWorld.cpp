@@ -27,9 +27,6 @@ int StudentWorld::init()
 		Star* s = new Star(randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), this);
 		m_actorList.push_back(s);
 	}
-	//create a new alien! dummy function
-	if (createAlien())
-		m_actorList.push_back(createNewAlien());
 
     return GWSTATUS_CONTINUE_GAME;
 }
@@ -37,6 +34,10 @@ int StudentWorld::init()
 //call doSomething on everything
 int StudentWorld::move()
 {
+	//create a new alien! dummy function
+	if (createAlien())
+		m_actorList.push_back(createNewAlien());
+
 	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end();) {
 		if ((*(*it)).isAlive()) {
 			(*(*it)).doSomething();
@@ -86,6 +87,13 @@ bool StudentWorld::createAlien() {
 }
 
 Alien* StudentWorld::createNewAlien() {
-	Smallgon* small = new Smallgon(this); //Constructor!
-	return small;
+	int i = randInt(1, 3);
+	switch (i) {
+	case 1: 
+		return new Smallgon(this);
+	case 2: 
+		return new Smoregon(this);
+	case 3: 
+		return new Snagglegon(this);
+	}
 }

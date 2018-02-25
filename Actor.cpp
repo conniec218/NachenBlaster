@@ -67,12 +67,15 @@ void Alien::doSomething() {
 	//For smoregon/smallgon
 	if (!isAlive())
 		return;
-	if (getX() < 0)
+	if (getX() < 0) {
 		setAlive(false);
+		return;
+	}
 	if (needsNewFlightPlan())
 		setNewFlightPlan();
 	//Now the alien will try to move itself
 	moveTo(getX() + (m_xDirection * travelSpeed()), getY() + (m_yDirection * travelSpeed()));
+	m_flightLength--;
 
 }
 
@@ -89,12 +92,11 @@ int Alien::flightLength() const {
 	return m_flightLength;
 }
 
-bool Alien::needsNewFlightPlan() {
-	return m_flightLength == 0 || getY() <= 0 || getY() >= VIEW_HEIGHT - 1;
+bool Alien::needsNewFlightPlan() const {
+	return  getY() <= 0 || getY() >= VIEW_HEIGHT - 1 || flightLength() == 0;
 }
 
 void Alien::setNewFlightPlan() {
-	//for smore/small
 	if (getY() >= VIEW_HEIGHT - 1) {
 		m_xDirection = -1;
 		m_yDirection = -1;
@@ -127,4 +129,12 @@ void Alien::setNewFlightPlan() {
 }
 
 Smallgon::Smallgon(StudentWorld *s) 
-: Alien(s, 2.0, 0, IID_SMALLGON){}
+: Alien(s, 2.0, 0, IID_SMALLGON) {}
+
+Smoregon::Smoregon(StudentWorld *s)
+	: Alien(s, 2.0, 0, IID_SMOREGON) {}
+
+Snagglegon::Snagglegon(StudentWorld *s)
+	: Alien(s, 1.75, -1, IID_SNAGGLEGON, -1, -1) {}
+
+
