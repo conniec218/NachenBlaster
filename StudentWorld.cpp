@@ -77,7 +77,7 @@ bool StudentWorld::createAlien() {
 	return true;
 }
 
-Alien* createNewAlien() {
-	Smallgon* small = new Smallgon(); //Constructor!
+Alien* StudentWorld::createNewAlien() {
+	Smallgon* small = new Smallgon(this); //Constructor!
 	return small;
 }

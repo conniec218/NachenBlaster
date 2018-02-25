@@ -9,6 +9,7 @@
 class Star;
 class NachenBlaster;
 class Actor;
+class Alien;
 
 class StudentWorld : public GameWorld
 {

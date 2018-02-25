@@ -39,11 +39,12 @@ public:
 
 class Alien : public Actor {
 public: 
-	Alien(double travelSpeed, int flightLength, int IMAGE_ID, int xDirection = -1, int yDirection = 0); 
+	Alien(StudentWorld* s, double travelSpeed, int flightLength, int IMAGE_ID, int xDirection = -1, int yDirection = 0); 
 	void virtual doSomething(); 
 	void flightPlan(int &x, int& y); 
 	double travelSpeed();
 	int flightLength();
+	bool setAlive();
 private:
 	double m_travelSpeed;
 	int m_flightLength;
@@ -52,7 +53,10 @@ private:
 	int m_yDirection;
 };
 
-class Smallgon : public Alien {};
+class Smallgon : public Alien {
+public:
+	Smallgon(StudentWorld *s);
+};
 
 class Snagglegon : public Alien {
 };

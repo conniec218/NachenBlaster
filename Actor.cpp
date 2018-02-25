@@ -64,8 +64,9 @@ bool Star::setAlive() {
 	return true;
 }
 
-Alien::Alien(double travelSpeed, int flightLength, int IMAGE_ID, int xDirection, int yDirection)
-	: Actor() {}
+Alien::Alien(StudentWorld* s, double travelSpeed, int flightLength, int IMAGE_ID, int xDirection, int yDirection)
+	: Actor(s, IMAGE_ID, VIEW_WIDTH - 1, randInt(0, VIEW_HEIGHT - 1), 0, 1.5, 1), m_flightLength(flightLength), m_travelSpeed(travelSpeed), 
+	m_xDirection(xDirection), m_yDirection(yDirection) {}
 
 void Alien::doSomething() {
 	//For smoregon/smallgon
@@ -84,3 +85,10 @@ int Alien::flightLength() {
 	return m_flightLength;
 }
 
+//Dummy functions
+bool Alien::setAlive() {
+	return true;
+}
+
+Smallgon::Smallgon(StudentWorld *s) 
+: Alien(s, 2.0, 0, IID_SMALLGON){}
