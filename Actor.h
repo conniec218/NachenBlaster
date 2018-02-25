@@ -42,8 +42,9 @@ public:
 	void flightPlan(int &x, int& y); 
 	double travelSpeed() const;
 	int flightLength() const;
-	bool virtual needsNewFlightPlan() const;
-	void virtual setNewFlightPlan();
+	bool needsNewFlightPlan() const;
+	void setNewFlightPlan();
+	//void sufferDamage();
 private:
 	double m_travelSpeed;
 	int m_flightLength;
@@ -65,5 +66,21 @@ public:
 class Snagglegon : public Alien {
 public:
 	Snagglegon(StudentWorld *s);
+};
+
+class Projectile : public Actor {
+public:
+	Projectile(StudentWorld* s, int startX, int startY, int IMAGE_ID, Direction dir);
+	void doSomething();  //create a doDifferentiateThing function that is virtual? then specify in cabbage/turnip/flatulence torpedo class. or pure virtual?
+	bool virtual OutofBounds() const = 0;
+	void virtual moveProjectile() = 0;
+	void virtual rotateProjectile();
+};
+
+class Cabbage : public Projectile {
+public:
+	Cabbage(StudentWorld * s, int startX, int startY);
+	bool OutofBounds() const;
+	void moveProjectile();
 };
 #endif // ACTOR_H_

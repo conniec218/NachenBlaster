@@ -42,6 +42,10 @@ void NachenBlaster::doSomething() {
 			if (getY() + 6 < (VIEW_HEIGHT - 1))
 				moveTo(getX(), getY() + 6);
 			break;
+		case KEY_PRESS_SPACE:
+			//How do I add this to the actorlist?
+			getWorld()->addActorToList(new Cabbage(getWorld(), getX() + 12, getY()));
+			break;
 		}
 	}
 	return;
@@ -137,4 +141,31 @@ Smoregon::Smoregon(StudentWorld *s)
 Snagglegon::Snagglegon(StudentWorld *s)
 	: Alien(s, 1.75, -1, IID_SNAGGLEGON, -1, -1) {}
 
+Projectile::Projectile(StudentWorld* s, int startX, int startY, int IMAGE_ID, Direction dir)
+	: Actor(s, IMAGE_ID, startX, startY, dir, .5, 1) {}
 
+void Projectile::doSomething() {
+	if (!isAlive())
+		return;
+	if (OutofBounds()) {
+		setAlive(false);
+		return;
+	}
+	moveProjectile();
+	rotateProjectile();
+}
+
+void Projectile::rotateProjectile() {
+	setDirection(getDirection() + 20);
+}
+
+Cabbage::Cabbage(StudentWorld* s, int startX, int startY)
+	: Projectile(s, startX, startY, IID_CABBAGE, 0) {}
+
+bool Cabbage::OutofBounds() const {
+	return getX() >= VIEW_WIDTH;
+}
+
+void Cabbage::moveProjectile() {
+	moveTo(getX() + 8, getY());
+}

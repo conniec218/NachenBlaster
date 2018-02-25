@@ -24,9 +24,12 @@ int StudentWorld::init()
 {
 	nachenblaster = new NachenBlaster(this);
 	for (int i = 0; i < 30; i++) {
-		Star* s = new Star(randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), this);
-		m_actorList.push_back(s);
+		addActorToList(new Star(randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), this));
 	}
+
+	//create a new alien! dummy function
+	if (createAlien())
+		addActorToList(createNewAlien());
 
     return GWSTATUS_CONTINUE_GAME;
 }
@@ -34,9 +37,7 @@ int StudentWorld::init()
 //call doSomething on everything
 int StudentWorld::move()
 {
-	//create a new alien! dummy function
-	if (createAlien())
-		m_actorList.push_back(createNewAlien());
+
 
 	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end();) {
 		if ((*(*it)).isAlive()) {
@@ -58,7 +59,7 @@ int StudentWorld::move()
 			it++;*/
 	}
 	if (randInt(1, 15) == 8)
-		m_actorList.push_back(new Star(VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1), this));
+		addActorToList(new Star(VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1), this));
 
 	nachenblaster->doSomething();
 	//Determines if the object is dead
@@ -81,19 +82,28 @@ void StudentWorld::cleanUp()
 	}
 }
 
+void StudentWorld::addActorToList(Actor* a) {
+	m_actorList.push_back(a);
+}
 //Dummy function
 bool StudentWorld::createAlien() {
 	return true;
 }
 
+//Dummy function
 Alien* StudentWorld::createNewAlien() {
 	int i = randInt(1, 3);
 	switch (i) {
 	case 1: 
 		return new Smallgon(this);
+		break;
 	case 2: 
 		return new Smoregon(this);
+		break;
 	case 3: 
 		return new Snagglegon(this);
+		break;
 	}
+	return new Smallgon(this);
 }
+

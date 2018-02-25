@@ -10,6 +10,7 @@ class Star;
 class NachenBlaster;
 class Actor;
 class Alien;
+class Projectile;
 
 class StudentWorld : public GameWorld
 {
@@ -19,6 +20,7 @@ public:
     virtual int init();
     virtual int move();
     virtual void cleanUp();
+	void addActorToList(Actor* a);
 	bool createAlien();
 	Alien* createNewAlien();
 
