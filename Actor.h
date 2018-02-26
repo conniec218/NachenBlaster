@@ -46,6 +46,7 @@ public:
 	bool needsNewFlightPlan() const;
 	void setNewFlightPlan();
 	bool isAlien() const;
+	bool virtual reactToPlayerInLineOfFire() = 0;
 	//void sufferDamage();
 private:
 	double m_travelSpeed;
@@ -58,16 +59,19 @@ private:
 class Smallgon : public Alien {
 public:
 	Smallgon(StudentWorld *s);
+	bool reactToPlayerInLineOfFire();
 };
 
 class Smoregon : public Alien {
 public:
 	Smoregon(StudentWorld *s);
+	bool reactToPlayerInLineOfFire();
 };
 
 class Snagglegon : public Alien {
 public:
 	Snagglegon(StudentWorld *s);
+	bool reactToPlayerInLineOfFire();
 };
 
 class Projectile : public Actor {

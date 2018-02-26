@@ -49,14 +49,6 @@ int StudentWorld::move()
 			it = m_actorList.erase(it);
 			delete st;
 		}
-		/*if ((*(*it)).getX() < 0) {  //isAlive
-			Actor* st = *it;
-			it = m_actorList.erase(it);
-			delete st;
-			//cerr << "erase" << endl;
-		}
-		else
-			it++;*/
 	}
 	if (randInt(1, 15) == 8)
 		addActorToList(new Star(VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1), this));
@@ -107,3 +99,8 @@ Alien* StudentWorld::createNewAlien() {
 	return new Smallgon(this);
 }
 
+bool StudentWorld::playerInLineOfFire(const Actor* a) {
+	if ((nachenblaster->getX() < a->getX()) && (a->getY() - nachenblaster->getY() == 4 || a->getY() - nachenblaster->getY() == -4))
+		return true;
+	return false;
+}

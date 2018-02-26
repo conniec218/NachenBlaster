@@ -85,13 +85,11 @@ void Alien::doSomething() {
 	if (needsNewFlightPlan())
 		setNewFlightPlan();
 	//#5
-	//if(getWorld())
-	getWorld()->addActorToList(new Turnip(getWorld(), getX() - 14, getY()));
-
-	//Now the alien will try to move itself
-	moveTo(getX() + (m_xDirection * travelSpeed()), getY() + (m_yDirection * travelSpeed()));
-	m_flightLength--;
-
+	if (getWorld()->playerInLineOfFire(this))
+		if (!reactToPlayerInLineOfFire()) {
+			moveTo(getX() + (m_xDirection * travelSpeed()), getY() + (m_yDirection * travelSpeed()));
+			m_flightLength--;
+		}
 }
 
 void Alien::flightPlan(int &x, int& y) {
@@ -150,11 +148,40 @@ bool Alien::isAlien() const {
 Smallgon::Smallgon(StudentWorld *s) 
 : Alien(s, 2.0, 0, IID_SMALLGON) {}
 
+bool Smallgon::reactToPlayerInLineOfFire() {
+	//Returns true if a projectile was shot
+	if (randInt(1, 20 / (getWorld()->getLevel()) + 5) == 1) {
+		getWorld()->addActorToList(new Turnip(getWorld(), getX() - 14, getY()));
+		return true;
+	}
+	return false;
+}
+
 Smoregon::Smoregon(StudentWorld *s)
 	: Alien(s, 2.0, 0, IID_SMOREGON) {}
 
+//FIX
+bool Smoregon::reactToPlayerInLineOfFire() {
+	//Returns true if a projectile was shot
+	if (randInt(1, 20 / (getWorld()->getLevel()) + 5) == 1) {
+		getWorld()->addActorToList(new Turnip(getWorld(), getX() - 14, getY()));
+		return true;
+	}
+	return false;
+}
+
 Snagglegon::Snagglegon(StudentWorld *s)
 	: Alien(s, 1.75, -1, IID_SNAGGLEGON, -1, -1) {}
+
+//FIX
+bool Snagglegon::reactToPlayerInLineOfFire() {
+	//Returns true if a projectile was shot
+	if (randInt(1, 20 / (getWorld()->getLevel()) + 5) == 1) {
+		getWorld()->addActorToList(new Turnip(getWorld(), getX() - 14, getY()));
+		return true;
+	}
+	return false;
+}
 
 Projectile::Projectile(StudentWorld* s, int startX, int startY, int IMAGE_ID, Direction dir)
 	: Actor(s, IMAGE_ID, startX, startY, dir, .5, 1) {}
