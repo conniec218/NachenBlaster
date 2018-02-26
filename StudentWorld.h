@@ -23,6 +23,7 @@ public:
 	void addActorToList(Actor* a);
 	bool createAlien();
 	Alien* createNewAlien();
+	bool playerInLineOfFire(const Actor* a);
 
 private:
 	NachenBlaster* nachenblaster;

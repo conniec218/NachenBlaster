@@ -14,6 +14,7 @@ public:
 	StudentWorld* getWorld();
 	bool isAlive() const;
 	bool setAlive(bool alive);
+	bool virtual isAlien() const;
 private:
 	StudentWorld* m_studentWorld; 
 	bool m_isAlive;
@@ -44,6 +45,7 @@ public:
 	int flightLength() const;
 	bool needsNewFlightPlan() const;
 	void setNewFlightPlan();
+	bool isAlien() const;
 	//void sufferDamage();
 private:
 	double m_travelSpeed;

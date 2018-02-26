@@ -59,6 +59,10 @@ bool Actor::setAlive(bool alive) {
 	return m_isAlive;
 }
 
+bool Actor::isAlien() const {
+	return false;
+}
+
 Star::Star(int startX, int startY, StudentWorld* s)
 	: Actor(s, IID_STAR, startX, startY, 0, randInt(5, 50) * .01, 3) {}
 
@@ -80,8 +84,8 @@ void Alien::doSomething() {
 	}
 	if (needsNewFlightPlan())
 		setNewFlightPlan();
-	//#5- if nachenblaster is somewhere- create a function for it
-	//Will need a different function 
+	//#5
+	//if(getWorld())
 	getWorld()->addActorToList(new Turnip(getWorld(), getX() - 14, getY()));
 
 	//Now the alien will try to move itself
@@ -137,6 +141,10 @@ void Alien::setNewFlightPlan() {
 		}
 	}
 	m_flightLength = randInt(1, 32);
+}
+
+bool Alien::isAlien() const {
+	return true;
 }
 
 Smallgon::Smallgon(StudentWorld *s) 
