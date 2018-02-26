@@ -43,9 +43,12 @@ void NachenBlaster::doSomething() {
 				moveTo(getX(), getY() + 6);
 			break;
 		case KEY_PRESS_SPACE:
-			//How do I add this to the actorlist?
+			//Cabbage points!
 			getWorld()->addActorToList(new Cabbage(getWorld(), getX() + 12, getY()));
 			break;
+		case KEY_PRESS_TAB:
+			//Check for # of flatulence torpedoes in inventory, decrement torpedo count by 1
+			getWorld()->addActorToList(new Flatulence_Torpedo(false, getWorld(), getX() + 12, getY(), 0));
 		}
 	}
 	return;
@@ -77,6 +80,10 @@ void Alien::doSomething() {
 	}
 	if (needsNewFlightPlan())
 		setNewFlightPlan();
+	//#5- if nachenblaster is somewhere- create a function for it
+	//Will need a different function 
+	getWorld()->addActorToList(new Turnip(getWorld(), getX() - 14, getY()));
+
 	//Now the alien will try to move itself
 	moveTo(getX() + (m_xDirection * travelSpeed()), getY() + (m_yDirection * travelSpeed()));
 	m_flightLength--;
@@ -168,4 +175,36 @@ bool Cabbage::OutofBounds() const {
 
 void Cabbage::moveProjectile() {
 	moveTo(getX() + 8, getY());
+}
+
+Turnip::Turnip(StudentWorld * s, int startX, int startY)
+	: Projectile(s, startX, startY, IID_TURNIP, 0) {}
+
+bool Turnip::OutofBounds() const {
+	return getX() < 0;
+}
+
+void Turnip::moveProjectile() {
+	moveTo(getX() - 6, getY());
+}
+
+Flatulence_Torpedo::Flatulence_Torpedo(bool shotByAlien, StudentWorld * s, int startX, int startY, Direction dir)
+	: Projectile(s, startX, startY, IID_TORPEDO, dir), m_shotByAlien(shotByAlien) {}
+
+bool Flatulence_Torpedo::OutofBounds() const {
+	return getX() < 0 || getX() >= VIEW_WIDTH;
+}
+
+void Flatulence_Torpedo::moveProjectile() {
+	if (shotByAlien())
+		moveTo(getX() - 8, getY());
+	else
+		moveTo(getX() + 8, getY());
+}
+void Flatulence_Torpedo::rotateProjectile() {
+	return;
+}
+
+bool Flatulence_Torpedo::shotByAlien() const {
+	return m_shotByAlien;
 }

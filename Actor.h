@@ -83,4 +83,22 @@ public:
 	bool OutofBounds() const;
 	void moveProjectile();
 };
+
+class Turnip : public Projectile {
+public:
+	Turnip(StudentWorld * s, int startX, int startY);
+	bool OutofBounds() const;
+	void moveProjectile();
+};
+
+class Flatulence_Torpedo : public Projectile {
+public:
+	Flatulence_Torpedo(bool shotByAlien, StudentWorld * s, int startX, int startY, Direction dir);
+	bool OutofBounds() const;
+	void moveProjectile();
+	void rotateProjectile();
+	bool shotByAlien() const;
+private:
+	bool m_shotByAlien;
+};
 #endif // ACTOR_H_
