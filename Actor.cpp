@@ -34,14 +34,15 @@ bool Actor::isStar() const {
 }
 
 NachenBlaster::NachenBlaster(StudentWorld* s)
-	: Actor(s,IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPoints(50), m_cabbagePoints(30) {}
+	: Actor(s,IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPoints(50), m_cabbagePoints(30), m_torpedoInventory(0) {}
 
 void NachenBlaster::doSomething() {
+	if(cabbagePoints() < 30)
+		addCabbagePoint();
 	if (m_hitPoints <= 0)
 		return;
 	int ch;
 	if(getWorld()->getKey(ch)){
-		//std::cerr << "getKey" << std::endl;
 		switch (ch) {
 		case KEY_PRESS_DOWN:
 			if (getY() - 6 >= 0)
@@ -60,12 +61,13 @@ void NachenBlaster::doSomething() {
 				moveTo(getX(), getY() + 6);
 			break;
 		case KEY_PRESS_SPACE:
-			//Cabbage points!
-			getWorld()->addActorToList(new Cabbage(getWorld(), getX() + 12, getY()));
+			if (cabbagePoints() >= 5) {
+				shootCabbage();
+			}
 			break;
 		case KEY_PRESS_TAB:
-			//Check for # of flatulence torpedoes in inventory, decrement torpedo count by 1
-			getWorld()->addActorToList(new Flatulence_Torpedo(false, getWorld(), getX() + 12, getY(), 0));
+			if (torpedoInventory() > 0)
+				shootTorpedo();
 		}
 	}
 	return;
@@ -79,6 +81,30 @@ void NachenBlaster::sufferDamage(int damage) {
 	m_hitPoints -= damage;
 	if (m_hitPoints <= 0)
 		setAlive(false);
+}
+
+int NachenBlaster::cabbagePoints() const
+{
+	return m_cabbagePoints;
+}
+
+void NachenBlaster::addCabbagePoint()
+{
+	m_cabbagePoints++;
+}
+
+int NachenBlaster::torpedoInventory() const {
+	return m_torpedoInventory;
+}
+
+void NachenBlaster::shootCabbage() {
+	m_cabbagePoints -= 5;
+	getWorld()->addActorToList(new Cabbage(getWorld(), getX() + 12, getY()));
+}
+
+void NachenBlaster::shootTorpedo() {
+	m_torpedoInventory--;
+	getWorld()->addActorToList(new Flatulence_Torpedo(false, getWorld(), getX() + 12, getY(), 0));
 }
 
 Star::Star(int startX, int startY, StudentWorld* s)

@@ -2,8 +2,9 @@
 #define STUDENTWORLD_H_
 
 #include "GameWorld.h"
-#include <list>
 #include <string>
+#include <list>
+#include <sstream>
 
 const int COLLISION_WITH_TORPEDO = 1;
 const int COLLISION_WITH_PROJECTILE = 2;
@@ -39,6 +40,7 @@ public:
 	int aliensOnScreen() const;
 	void addNewAlienOnScreen();
 	void decAliensOnScreen();
+	std::string updateStatusBar();
 
 private:
 	NachenBlaster* nachenblaster;
@@ -47,6 +49,7 @@ private:
 	int m_nAliensToAdvance;
 	int m_maxAliensOnScreen;
 	int m_aliensOnScreen;
+	
 };
 
 #endif // STUDENTWORLD_H_

@@ -28,10 +28,15 @@ public:
 	void doSomething();
 	int hitPoints() const;
 	void sufferDamage(int damage);
+	int cabbagePoints() const;
+	void addCabbagePoint();
+	void shootCabbage();
+	void shootTorpedo();
+	int torpedoInventory() const;
 private:
 	int m_hitPoints;
 	int m_cabbagePoints;
-	
+	int m_torpedoInventory;
 };
 
 class Star : public Actor {

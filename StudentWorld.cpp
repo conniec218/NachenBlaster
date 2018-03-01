@@ -2,6 +2,7 @@
 #include "GameConstants.h"
 #include "Actor.h"
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <algorithm>
 using namespace std;
@@ -62,7 +63,7 @@ int StudentWorld::move()
 			delete st;
 		}
 	}
-		//Update status bar
+	setGameStatText(updateStatusBar());
 	if (randInt(1, 15) == 8)
 		addActorToList(new Star(VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1), this));
 	if (createAlien())
@@ -206,4 +207,17 @@ void StudentWorld::addNewAlienOnScreen()
 
 void StudentWorld::decAliensOnScreen() {
 	m_aliensOnScreen--;
+}
+
+string StudentWorld::updateStatusBar()
+{ 
+	std::ostringstream status_bar;
+	status_bar << "Lives: " << getLives() << "  " << 
+		"Health: " << 100-(nachenblaster->hitPoints()/50) << "%  " << 
+		"Score: " << getScore() << "  " << 
+		"Level: " << getLevel() << "  " << 
+		"Cabbages: " << 100-(nachenblaster->cabbagePoints()/30) << "  " <<
+		"Torpedoes: " << nachenblaster->torpedoInventory();
+	string s = status_bar.str();
+	return s;
 }
