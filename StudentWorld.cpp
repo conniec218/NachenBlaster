@@ -1,6 +1,7 @@
 #include "StudentWorld.h"
 #include "GameConstants.h"
 #include "Actor.h"
+#include <iostream>
 #include <string>
 using namespace std;
 
@@ -37,8 +38,6 @@ int StudentWorld::init()
 //call doSomething on everything
 int StudentWorld::move()
 {
-
-
 	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end();) {
 		if ((*(*it)).isAlive()) {
 			(*(*it)).doSomething();
@@ -88,19 +87,19 @@ Alien* StudentWorld::createNewAlien() {
 	switch (i) {
 	case 1: 
 		return new Smallgon(this);
-		break;
 	case 2: 
 		return new Smoregon(this);
-		break;
 	case 3: 
 		return new Snagglegon(this);
-		break;
 	}
 	return new Smallgon(this);
 }
 
 bool StudentWorld::playerInLineOfFire(const Actor* a) {
-	if ((nachenblaster->getX() < a->getX()) && (a->getY() - nachenblaster->getY() == 4 || a->getY() - nachenblaster->getY() == -4))
+	if ((nachenblaster->getX() < a->getX()) && abs(a->getY() - nachenblaster->getY()) <= 4) {
+		cout << "PLF True" << endl;
 		return true;
+	}
+	cout << "PLF False" << endl;
 	return false;
 }

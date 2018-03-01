@@ -1,5 +1,7 @@
 #include "Actor.h"
 #include "StudentWorld.h"
+#include <iostream>
+using namespace std;
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 using Direction = int;
@@ -85,8 +87,7 @@ void Alien::doSomething() {
 	if (needsNewFlightPlan())
 		setNewFlightPlan();
 	//#5
-	if (getWorld()->playerInLineOfFire(this))
-		if (!reactToPlayerInLineOfFire()) {
+	if (!getWorld()->playerInLineOfFire(this) || !reactToPlayerInLineOfFire()) {
 			moveTo(getX() + (m_xDirection * travelSpeed()), getY() + (m_yDirection * travelSpeed()));
 			m_flightLength--;
 		}
@@ -160,10 +161,9 @@ bool Smallgon::reactToPlayerInLineOfFire() {
 Smoregon::Smoregon(StudentWorld *s)
 	: Alien(s, 2.0, 0, IID_SMOREGON) {}
 
-//FIX
 bool Smoregon::reactToPlayerInLineOfFire() {
 	//Returns true if a projectile was shot
-	if (randInt(1, 20 / (getWorld()->getLevel()) + 5) == 1) {
+	if (randInt(1, 15 / (getWorld()->getLevel()) + 5) == 1) {
 		getWorld()->addActorToList(new Turnip(getWorld(), getX() - 14, getY()));
 		return true;
 	}
@@ -173,11 +173,10 @@ bool Smoregon::reactToPlayerInLineOfFire() {
 Snagglegon::Snagglegon(StudentWorld *s)
 	: Alien(s, 1.75, -1, IID_SNAGGLEGON, -1, -1) {}
 
-//FIX
 bool Snagglegon::reactToPlayerInLineOfFire() {
 	//Returns true if a projectile was shot
-	if (randInt(1, 20 / (getWorld()->getLevel()) + 5) == 1) {
-		getWorld()->addActorToList(new Turnip(getWorld(), getX() - 14, getY()));
+	if (randInt(1, 15 / (getWorld()->getLevel()) + 10) == 1) {
+		getWorld()->addActorToList(new Flatulence_Torpedo(true, getWorld(), getX() - 14, getY(), 180));
 		return true;
 	}
 	return false;
