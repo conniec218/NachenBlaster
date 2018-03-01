@@ -111,6 +111,7 @@ void Alien::doSomething() {
 			moveTo(getX() + (m_xDirection * travelSpeed()), getY() + (m_yDirection * travelSpeed()));
 			m_flightLength--;
 		}*/
+	reactToPlayerInLineOfFire();
 	moveTo(getX() - 1, getY());
 }
 
@@ -227,6 +228,7 @@ void Projectile::doSomething() {
 		setAlive(false);
 		return;
 	}
+	getWorld()->checkForCollisions(this);
 	moveProjectile();
 	rotateProjectile();
 }
@@ -239,6 +241,12 @@ bool Projectile::isProjectile() const {
 	return true;
 }
 
+void Projectile::sufferDamage(int cause, Actor* a) {
+	if (cause == COLLISION_WITH_PLAYER) {
+		static_cast<NachenBlaster*>(a)->sufferDamage(2); //Figure out how to differentiate between turnips/torpedoes
+		setAlive(false);
+	}
+}
 Cabbage::Cabbage(StudentWorld* s, int startX, int startY)
 	: Projectile(s, startX, startY, IID_CABBAGE, 0) {}
 
@@ -250,6 +258,10 @@ void Cabbage::moveProjectile() {
 	moveTo(getX() + 8, getY());
 }
 
+bool Cabbage::shotByAlien() const {
+	return false;
+}
+
 Turnip::Turnip(StudentWorld * s, int startX, int startY)
 	: Projectile(s, startX, startY, IID_TURNIP, 0) {}
 
@@ -259,6 +271,10 @@ bool Turnip::OutofBounds() const {
 
 void Turnip::moveProjectile() {
 	moveTo(getX() - 6, getY());
+}
+
+bool Turnip::shotByAlien() const {
+	return true;
 }
 
 Flatulence_Torpedo::Flatulence_Torpedo(bool shotByAlien, StudentWorld * s, int startX, int startY, Direction dir)

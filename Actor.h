@@ -89,6 +89,8 @@ public:
 	void virtual moveProjectile() = 0;
 	void virtual rotateProjectile();
 	bool virtual isProjectile() const;
+	bool virtual shotByAlien() const = 0;
+	void sufferDamage(int cause, Actor* a);
 };
 
 class Cabbage : public Projectile {
@@ -96,6 +98,7 @@ public:
 	Cabbage(StudentWorld * s, int startX, int startY);
 	bool OutofBounds() const;
 	void moveProjectile();
+	bool virtual shotByAlien() const;
 };
 
 class Turnip : public Projectile {
@@ -103,6 +106,7 @@ public:
 	Turnip(StudentWorld * s, int startX, int startY);
 	bool OutofBounds() const;
 	void moveProjectile();
+	bool virtual shotByAlien() const;
 };
 
 class Flatulence_Torpedo : public Projectile {

@@ -111,27 +111,26 @@ int StudentWorld::checkForCollisions(Actor* a) {
 	distancex = ((nachenblaster)->getX() - a->getX()) * ((nachenblaster)->getX() - a->getX());
 	distancey = ((nachenblaster)->getY() - a->getY()) * ((nachenblaster)->getY() - a->getY());
 	distance = sqrt(distancex - distancey);
-
 	if (distance < .75 * (a->getRadius() + (nachenblaster)->getRadius())) {
 		if(a->isAlien())
 			static_cast<Alien*>(a)->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
+		if (a->isProjectile() && static_cast<Projectile*>(a)->shotByAlien()) {
+			static_cast<Projectile*>(a)->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
+			
+		}
 	}
 	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end(); it++) {
-		//cout << !(*it)->isStar() << endl;
 		if((*it)->isAlive() && (*it) != a && !(*it)->isStar()){
-				cout << "Valid actor" << endl;
 				distancex = ((*it)->getX() - a->getX()) * ((*it)->getX() - a->getX());
 				distancey = ((*it)->getY() - a->getY()) * ((*it)->getY() - a->getY());
 				distance = sqrt(distancex - distancey);
-				
 				if (distance < .75 * (a->getRadius() + (*it)->getRadius())) {
 					cout << "Collision occurred" << endl;
 					if (a->isAlien()) {
-						;
+						if((*it)->isProjectile())
+							;
 					}
-					//static_cast<Alien*>(*it)->sufferDamage();  //call suffer damage for both!
-					else if ((*it) == nachenblaster)
-						;//call suffer damage for both
+					//static_cast<Alien*>(*it)->sufferDamage();  //call suffer damage for both
 					else if ((*it)->isProjectile())
 						;//call suffer damage for both! may have to differentiate between shot by alien and shot by nachenblaster
 			}
