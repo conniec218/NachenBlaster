@@ -91,6 +91,7 @@ public:
 	bool virtual isProjectile() const;
 	bool virtual shotByAlien() const = 0;
 	void sufferDamage(int cause, Actor* a);
+	bool virtual isTorpedo() const;
 };
 
 class Cabbage : public Projectile {
@@ -116,6 +117,7 @@ public:
 	void moveProjectile();
 	void rotateProjectile();
 	bool shotByAlien() const;
+	bool isTorpedo() const;
 private:
 	bool m_shotByAlien;
 };

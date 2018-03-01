@@ -105,17 +105,14 @@ bool StudentWorld::playerInLineOfFire(const Actor* a) {
 	return false;
 }
 
-int StudentWorld::checkForCollisions(Actor* a) {
+int StudentWorld::checkForCollisions(Alien* a) {
 	int distancex, distancey;
 	double distance;
 	distancex = ((nachenblaster)->getX() - a->getX()) * ((nachenblaster)->getX() - a->getX());
 	distancey = ((nachenblaster)->getY() - a->getY()) * ((nachenblaster)->getY() - a->getY());
 	distance = sqrt(distancex - distancey);
 	if (distance < .75 * (a->getRadius() + (nachenblaster)->getRadius())) {
-		if(a->isAlien())
-			static_cast<Alien*>(a)->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
-		if (a->isProjectile() && static_cast<Projectile*>(a)->shotByAlien()) 
-			static_cast<Projectile*>(a)->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
+			a->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
 	}
 	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end(); it++) {
 		if((*it)->isAlive() && (*it) != a && !(*it)->isStar()){
@@ -123,10 +120,47 @@ int StudentWorld::checkForCollisions(Actor* a) {
 				distancey = ((*it)->getY() - a->getY()) * ((*it)->getY() - a->getY());
 				distance = sqrt(distancex - distancey);
 				if (distance < .75 * (a->getRadius() + (*it)->getRadius()))
-					if (a->isAlien())
 						if((*it)->isProjectile() && !static_cast<Projectile*>(*it)->shotByAlien())
 							static_cast<Projectile*>(*it)->sufferDamage(COLLISION_WITH_ALIEN, *it);
 		}
 	}
 	return NO_COLLISION;
 }
+
+int StudentWorld::checkForCollisions(Projectile* p) {
+	int distancex, distancey;
+	double distance;
+	distancex = ((nachenblaster)->getX() - p->getX()) * ((nachenblaster)->getX() - p->getX());
+	distancey = ((nachenblaster)->getY() - p->getY()) * ((nachenblaster)->getY() - p->getY());
+	distance = sqrt(distancex - distancey);
+	if (distance < .75 * (p->getRadius() + (nachenblaster)->getRadius()))
+		p->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
+	return NO_COLLISION;
+}
+
+/*int StudentWorld::checkForCollisions(Projectile* p) {
+	int distancex, distancey;
+	double distance;
+	distancex = ((nachenblaster)->getX() - a->getX()) * ((nachenblaster)->getX() - a->getX());
+	distancey = ((nachenblaster)->getY() - a->getY()) * ((nachenblaster)->getY() - a->getY());
+	distance = sqrt(distancex - distancey);
+	if (distance < .75 * (a->getRadius() + (nachenblaster)->getRadius())) {
+		if (a->isAlien())
+			static_cast<Alien*>(a)->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
+		if (a->isProjectile() && static_cast<Projectile*>(a)->shotByAlien())
+			if (static_cast)
+				static_cast<Projectile*>(a)->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
+	}
+	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end(); it++) {
+		if ((*it)->isAlive() && (*it) != a && !(*it)->isStar()) {
+			distancex = ((*it)->getX() - a->getX()) * ((*it)->getX() - a->getX());
+			distancey = ((*it)->getY() - a->getY()) * ((*it)->getY() - a->getY());
+			distance = sqrt(distancex - distancey);
+			if (distance < .75 * (a->getRadius() + (*it)->getRadius()))
+				if (a->isAlien())
+					if ((*it)->isProjectile() && !static_cast<Projectile*>(*it)->shotByAlien())
+						static_cast<Projectile*>(*it)->sufferDamage(COLLISION_WITH_ALIEN, *it);
+		}
+	}
+	return NO_COLLISION;
+}*/

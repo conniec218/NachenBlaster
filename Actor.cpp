@@ -238,7 +238,8 @@ void Projectile::doSomething() {
 		setAlive(false);
 		return;
 	}
-	getWorld()->checkForCollisions(this);
+	if(shotByAlien())
+		getWorld()->checkForCollisions(this);
 	moveProjectile();
 	rotateProjectile();
 }
@@ -260,6 +261,11 @@ void Projectile::sufferDamage(int cause, Actor* a) {
 	}
 	setAlive(false);
 }
+
+bool Projectile::isTorpedo() const {
+	return false;
+}
+
 Cabbage::Cabbage(StudentWorld* s, int startX, int startY)
 	: Projectile(s, startX, startY, IID_CABBAGE, 0) {}
 
@@ -309,4 +315,8 @@ void Flatulence_Torpedo::rotateProjectile() {
 
 bool Flatulence_Torpedo::shotByAlien() const {
 	return m_shotByAlien;
+}
+
+bool Flatulence_Torpedo::isTorpedo() const {
+	return true;
 }
