@@ -3,6 +3,7 @@
 #include "Actor.h"
 #include <iostream>
 #include <string>
+#include <algorithm>
 using namespace std;
 
 
@@ -24,6 +25,7 @@ StudentWorld::~StudentWorld() {
 
 int StudentWorld::init()
 {
+	setInitAlienStats();
 	nachenblaster = new NachenBlaster(this);
 	for (int i = 0; i < 30; i++) {
 		addActorToList(new Star(randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), this));
@@ -39,10 +41,20 @@ int StudentWorld::init()
 //call doSomething on everything
 int StudentWorld::move()
 {
+	nachenblaster->doSomething();
 	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end();) {
 		if ((*(*it)).isAlive()) {
 			(*(*it)).doSomething();
 			it++;
+			if (!nachenblaster->isAlive()) {
+				cout << "decLives" << endl;
+				decLives();
+				return GWSTATUS_PLAYER_DIED;
+			}
+			if (aliensKilled() == nAliensToAdvance()) {
+				//increase score?
+				return GWSTATUS_FINISHED_LEVEL;
+			}
 		}
 		else {
 			Actor* st = *it;
@@ -50,16 +62,11 @@ int StudentWorld::move()
 			delete st;
 		}
 	}
+		//Update status bar
 	if (randInt(1, 15) == 8)
 		addActorToList(new Star(VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1), this));
-
-	nachenblaster->doSomething();
-	//Determines if the object is dead
-	if (!nachenblaster->isAlive()) {
-		cout << "decLives" << endl;
-		decLives();
-		return GWSTATUS_PLAYER_DIED;
-	}
+	if (createAlien())
+		addActorToList(createNewAlien());	
 	return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -77,12 +84,20 @@ void StudentWorld::cleanUp()
 void StudentWorld::addActorToList(Actor* a) {
 	m_actorList.push_back(a);
 }
-//Dummy function
+
 bool StudentWorld::createAlien() {
-	return true;
+	cout << "Aliens to advance" << nAliensToAdvance() << endl;
+	cout << "aliens killed" << aliensKilled() << endl;
+	cout << "maxAliensOnScreen" << maxAliensOnScreen() << endl;
+	int r = nAliensToAdvance() - aliensKilled();
+	int m = maxAliensOnScreen();
+	bool a = aliensOnScreen() < min(m, r);
+	cout << "create a new alien? " << a << endl;
+	return a;
 }
 
 Alien* StudentWorld::createNewAlien() {
+	addNewAlienOnScreen();
 	int s1 = 60;
 	int s2 = 20 + getLevel() * 5;
 	int s3 = 5 + getLevel() * 10;
@@ -113,11 +128,7 @@ void StudentWorld::checkForCollisions(Alien* a) {
 	distancex = ((nachenblaster)->getX() - a->getX()) * ((nachenblaster)->getX() - a->getX());
 	distancey = ((nachenblaster)->getY() - a->getY()) * ((nachenblaster)->getY() - a->getY());
 	distance = sqrt(distancex + distancey);
-	cout << "player: (" << nachenblaster->getX() << ", " << nachenblaster->getY() << ")" << endl;
-	cout << "Alien: (" << a->getX() << ", " << a->getY() << ")" << endl;
-	cout << "distance: " << distance << endl;
 	if (distance < .75 * (a->getRadius() + (nachenblaster)->getRadius())) {
-		cout << "Called sufferDamage on alien due to collision with player" << endl;
 		a->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
 	}
 	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end(); it++) {
@@ -159,29 +170,40 @@ int StudentWorld::checkForCollisions(Projectile* p) {
 	return NO_COLLISION;
 }
 
-/*int StudentWorld::checkForCollisions(Projectile* p) {
-	int distancex, distancey;
-	double distance;
-	distancex = ((nachenblaster)->getX() - a->getX()) * ((nachenblaster)->getX() - a->getX());
-	distancey = ((nachenblaster)->getY() - a->getY()) * ((nachenblaster)->getY() - a->getY());
-	distance = sqrt(distancex - distancey);
-	if (distance < .75 * (a->getRadius() + (nachenblaster)->getRadius())) {
-		if (a->isAlien())
-			static_cast<Alien*>(a)->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
-		if (a->isProjectile() && static_cast<Projectile*>(a)->shotByAlien())
-			if (static_cast)
-				static_cast<Projectile*>(a)->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
-	}
-	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end(); it++) {
-		if ((*it)->isAlive() && (*it) != a && !(*it)->isStar()) {
-			distancex = ((*it)->getX() - a->getX()) * ((*it)->getX() - a->getX());
-			distancey = ((*it)->getY() - a->getY()) * ((*it)->getY() - a->getY());
-			distance = sqrt(distancex - distancey);
-			if (distance < .75 * (a->getRadius() + (*it)->getRadius()))
-				if (a->isAlien())
-					if ((*it)->isProjectile() && !static_cast<Projectile*>(*it)->shotByAlien())
-						static_cast<Projectile*>(*it)->sufferDamage(COLLISION_WITH_ALIEN, *it);
-		}
-	}
-	return NO_COLLISION;
-}*/
+int StudentWorld::aliensKilled() const {
+	return m_aliensKilled;
+}
+
+int StudentWorld::nAliensToAdvance() const {
+	return m_nAliensToAdvance;
+}
+
+void StudentWorld::killedAnAlien() {
+	m_aliensKilled++;
+	m_aliensOnScreen--;
+}
+
+void StudentWorld::setInitAlienStats() {
+	m_nAliensToAdvance = 6 + (4 * getLevel());
+	m_maxAliensOnScreen = 4 + (.5 * getLevel());
+	m_aliensOnScreen = 0;
+	m_aliensKilled = 0;
+}
+
+int StudentWorld::maxAliensOnScreen() const {
+	return m_maxAliensOnScreen;
+}
+
+int StudentWorld::aliensOnScreen() const
+{
+	return m_aliensOnScreen;
+}
+
+void StudentWorld::addNewAlienOnScreen()
+{
+	m_aliensOnScreen++;
+}
+
+void StudentWorld::decAliensOnScreen() {
+	m_aliensOnScreen--;
+}

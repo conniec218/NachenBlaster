@@ -101,6 +101,7 @@ void Alien::doSomething() {
 		return;
 	if (getX() < 0) {
 		setAlive(false);
+		getWorld()->decAliensOnScreen();
 		cout << "Alien died 3" << endl;
 		return;
 	}
@@ -185,9 +186,9 @@ void Alien::sufferDamage(int cause, Actor* a) {
 		else
 			static_cast<NachenBlaster*>(a)->sufferDamage(15);
 		setAlive(false);
+		getWorld()->killedAnAlien();
 		cout << "Alien died 1" << endl;
 		return;
-		cout << "Alien hit player" << endl;
 		//Increase player's score
 		//Introduce a new explosion object
 	}
@@ -203,6 +204,7 @@ void Alien::sufferDamage(int cause, Actor* a) {
 	if (m_hitPoints <= 0) {
 		//Increase player's score depending on type of alien this is! virtual function here
 		setAlive(false);
+		getWorld()->killedAnAlien();
 		cout << "Alien died 2" << endl;
 	}
 }

@@ -31,10 +31,22 @@ public:
 	bool playerInLineOfFire(const Actor* a);
 	void checkForCollisions(Alien* a);
 	int checkForCollisions(Projectile* p);
+	int aliensKilled() const;
+	int nAliensToAdvance() const;
+	void killedAnAlien();
+	void setInitAlienStats();
+	int maxAliensOnScreen() const;
+	int aliensOnScreen() const;
+	void addNewAlienOnScreen();
+	void decAliensOnScreen();
 
 private:
 	NachenBlaster* nachenblaster;
 	std::list<Actor*> m_actorList;
+	int m_aliensKilled;
+	int m_nAliensToAdvance;
+	int m_maxAliensOnScreen;
+	int m_aliensOnScreen;
 };
 
 #endif // STUDENTWORLD_H_
