@@ -56,6 +56,7 @@ int StudentWorld::move()
 	nachenblaster->doSomething();
 	//Determines if the object is dead
 	if (!nachenblaster->isAlive()) {
+		cout << "decLives" << endl;
 		decLives();
 		return GWSTATUS_PLAYER_DIED;
 	}
@@ -88,11 +89,11 @@ Alien* StudentWorld::createNewAlien() {
 	int s = s1 + s2 + s3;
 	int value = randInt(1, s);
 	if (value <= s1)
-		return new Smallgon(this);
+		return new Smallgon(5 * (1 + (getLevel() - 1) * .1), this);
 	else if (value > s1 && value <= (s1 + s2))
-		return new Smoregon(this);
+		return new Smoregon(5 * (1 + (getLevel() - 1) * .1), this);
 	else
-		return new Snagglegon(this);
+		return new Snagglegon(10 * (1 + (getLevel() - 1) * .1), this);
 }
 
 bool StudentWorld::playerInLineOfFire(const Actor* a) {
@@ -105,19 +106,25 @@ bool StudentWorld::playerInLineOfFire(const Actor* a) {
 }
 
 void StudentWorld::checkForCollisions(Alien* a) {
+	if (!a->isAlive() || !nachenblaster->isAlive())
+		return;
 	double distancex, distancey;
 	double distance;
 	distancex = ((nachenblaster)->getX() - a->getX()) * ((nachenblaster)->getX() - a->getX());
 	distancey = ((nachenblaster)->getY() - a->getY()) * ((nachenblaster)->getY() - a->getY());
-	distance = sqrt(distancex - distancey);
+	distance = sqrt(distancex + distancey);
+	cout << "player: (" << nachenblaster->getX() << ", " << nachenblaster->getY() << ")" << endl;
+	cout << "Alien: (" << a->getX() << ", " << a->getY() << ")" << endl;
+	cout << "distance: " << distance << endl;
 	if (distance < .75 * (a->getRadius() + (nachenblaster)->getRadius())) {
-			a->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
+		cout << "Called sufferDamage on alien due to collision with player" << endl;
+		a->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
 	}
 	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end(); it++) {
 		if((*it)->isAlive() && (*it) != a && !(*it)->isStar()){
 				distancex = ((*it)->getX() - a->getX()) * ((*it)->getX() - a->getX());
 				distancey = ((*it)->getY() - a->getY()) * ((*it)->getY() - a->getY());
-				distance = sqrt(distancex - distancey);
+				distance = sqrt(distancex + distancey);
 				if (distance < .75 * (a->getRadius() + (*it)->getRadius()))
 					//Did it collide with a nachenblaster-fired cabbage/torpedo?
 						if((*it)->isProjectile() && !static_cast<Projectile*>(*it)->shotByAlien())
@@ -133,11 +140,13 @@ void StudentWorld::checkForCollisions(Alien* a) {
 
 //Called by Alien-fired projectiles only
 int StudentWorld::checkForCollisions(Projectile* p) {
+	if (!p->isAlive() || !nachenblaster->isAlive())
+		return NO_COLLISION;
 	double distancex, distancey;
 	double distance;
 	distancex = ((nachenblaster)->getX() - p->getX()) * ((nachenblaster)->getX() - p->getX());
 	distancey = ((nachenblaster)->getY() - p->getY()) * ((nachenblaster)->getY() - p->getY());
-	distance = sqrt(distancex - distancey);
+	distance = sqrt(distancex + distancey);
 	if (distance < .75 * (p->getRadius() + (nachenblaster)->getRadius()))
 		if (p->isTorpedo()) {
 			p->sufferDamage(COLLISION_WITH_TORPEDO, nachenblaster);

@@ -92,15 +92,16 @@ bool Star::isStar() const {
 	return true;
 }
 
-Alien::Alien(StudentWorld* s, double travelSpeed, int flightLength, int IMAGE_ID, int xDirection, int yDirection)
+Alien::Alien(double hitPoints, StudentWorld* s, double travelSpeed, int flightLength, int IMAGE_ID, int xDirection, int yDirection)
 	: Actor(s, IMAGE_ID, VIEW_WIDTH - 1, randInt(0, VIEW_HEIGHT - 1), 0, 1.5, 1), m_flightLength(flightLength), m_travelSpeed(travelSpeed), 
-	m_xDirection(xDirection), m_yDirection(yDirection) {}
+	m_xDirection(xDirection), m_yDirection(yDirection), m_hitPoints(hitPoints) {}
 
 void Alien::doSomething() {
 	if (!isAlive())
 		return;
 	if (getX() < 0) {
 		setAlive(false);
+		cout << "Alien died 3" << endl;
 		return;
 	}
 	getWorld()->checkForCollisions(this);
@@ -111,6 +112,7 @@ void Alien::doSomething() {
 			moveTo(getX() + (m_xDirection * travelSpeed()), getY() + (m_yDirection * travelSpeed()));
 			m_flightLength--;
 		}
+
 	getWorld()->checkForCollisions(this);
 	//Simple movements
 	//reactToPlayerInLineOfFire();
@@ -177,18 +179,20 @@ int Alien::hitPoints() const {
 
 void Alien::sufferDamage(int cause, Actor* a) {
 	if (cause == COLLISION_WITH_PLAYER) {
+		cout << "Collision with player" << endl;
 		if(isSnagglegon())
 			static_cast<NachenBlaster*>(a)->sufferDamage(5);   
 		else
 			static_cast<NachenBlaster*>(a)->sufferDamage(15);
 		setAlive(false);
+		cout << "Alien died 1" << endl;
 		return;
 		cout << "Alien hit player" << endl;
 		//Increase player's score
 		//Introduce a new explosion object
 	}
 	if (cause == COLLISION_WITH_PROJECTILE) {
-		cout << "Alien hit with cabbage" << endl;
+		cout << "Alien hit with cabbage. Hit points left: " << hitPoints() << endl;
 		m_hitPoints -= 2;  
 	}
 	else if (cause == COLLISION_WITH_TORPEDO) {
@@ -199,14 +203,15 @@ void Alien::sufferDamage(int cause, Actor* a) {
 	if (m_hitPoints <= 0) {
 		//Increase player's score depending on type of alien this is! virtual function here
 		setAlive(false);
+		cout << "Alien died 2" << endl;
 	}
 }
 
 bool Alien::isSnagglegon() const {
 	return false;
 }
-Smallgon::Smallgon(StudentWorld *s) 
-: Alien(s, 2.0, 0, IID_SMALLGON) {}
+Smallgon::Smallgon(double hitPoints, StudentWorld *s) 
+: Alien(hitPoints, s, 2.0, 0, IID_SMALLGON) {}
 
 bool Smallgon::reactToPlayerInLineOfFire() {
 	//Returns true if a projectile was shot
@@ -217,8 +222,8 @@ bool Smallgon::reactToPlayerInLineOfFire() {
 	return false;
 }
 
-Smoregon::Smoregon(StudentWorld *s)
-	: Alien(s, 2.0, 0, IID_SMOREGON) {}
+Smoregon::Smoregon(double hitPoints, StudentWorld *s)
+	: Alien(hitPoints, s, 2.0, 0, IID_SMOREGON) {}
 
 bool Smoregon::reactToPlayerInLineOfFire() {
 	//Returns true if a projectile was shot
@@ -229,8 +234,8 @@ bool Smoregon::reactToPlayerInLineOfFire() {
 	return false;
 }
 
-Snagglegon::Snagglegon(StudentWorld *s)
-	: Alien(s, 1.75, -1, IID_SNAGGLEGON, -1, -1) {}
+Snagglegon::Snagglegon(double hitPoints, StudentWorld *s)
+	: Alien(hitPoints, s, 1.75, -1, IID_SNAGGLEGON, -1, -1) {}
 
 bool Snagglegon::reactToPlayerInLineOfFire() {
 	//Returns true if a projectile was shot
@@ -260,6 +265,9 @@ void Projectile::doSomething() {
 			return;
 	moveProjectile();
 	rotateProjectile();
+	if (shotByAlien())
+		if (getWorld()->checkForCollisions(this) != NO_COLLISION)
+			return;
 }
 
 void Projectile::rotateProjectile() {

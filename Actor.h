@@ -43,8 +43,8 @@ public:
 
 class Alien : public Actor {
 public: 
-	Alien(StudentWorld* s, double travelSpeed, int flightLength, int IMAGE_ID, int xDirection = -1, int yDirection = 0); 
-	void doSomething(); 
+	Alien(double hitPoints, StudentWorld * s, double travelSpeed, int flightLength, int IMAGE_ID, int xDirection = -1, int yDirection = 0);
+	void doSomething();
 	void flightPlan(int &x, int& y); 
 	double travelSpeed() const;
 	int flightLength() const;
@@ -61,24 +61,24 @@ private:
 	//m_xDirection and m_yDirection must be either 1 or 0 or -1
 	int m_xDirection;
 	int m_yDirection;
-	int m_hitPoints;  //Don't forget to initialize hit points for aliens! Different depending on level, and snaggle is different from smore/small- init function or something
+	int m_hitPoints;  
 };
 
 class Smallgon : public Alien {
 public:
-	Smallgon(StudentWorld *s);
+	Smallgon(double hitPoints, StudentWorld *s);
 	bool reactToPlayerInLineOfFire();
 };
 
 class Smoregon : public Alien {
 public:
-	Smoregon(StudentWorld *s);
+	Smoregon(double hitPoints, StudentWorld *s);
 	bool reactToPlayerInLineOfFire();
 };
 
 class Snagglegon : public Alien {
 public:
-	Snagglegon(StudentWorld *s);
+	Snagglegon(double hitPoints, StudentWorld *s);
 	bool reactToPlayerInLineOfFire();
 	bool isSnagglegon() const;
 };
