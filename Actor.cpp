@@ -17,9 +17,8 @@ bool Actor::isAlive() const {
 	return m_isAlive;
 }
 
-bool Actor::setAlive(bool alive) {
+void Actor::setAlive(bool alive) {
 	m_isAlive = alive;
-	return m_isAlive;
 }
 
 bool Actor::isAlien() const {
@@ -179,7 +178,7 @@ int Alien::hitPoints() const {
 void Alien::sufferDamage(int cause, Actor* a) {
 	if (cause == COLLISION_WITH_PLAYER) {
 		if(isSnagglegon())
-			static_cast<NachenBlaster*>(a)->sufferDamage(5);   //Figure out how to differentiate between aliens
+			static_cast<NachenBlaster*>(a)->sufferDamage(5);   
 		else
 			static_cast<NachenBlaster*>(a)->sufferDamage(15);
 		setAlive(false);

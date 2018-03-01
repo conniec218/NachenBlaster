@@ -13,7 +13,7 @@ public:
 	void virtual doSomething() = 0;
 	StudentWorld* getWorld();
 	bool isAlive() const;
-	bool setAlive(bool alive);
+	void setAlive(bool alive);
 	bool virtual isAlien() const;
 	bool virtual isProjectile() const;
 	bool virtual isStar() const;

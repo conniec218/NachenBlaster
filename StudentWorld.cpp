@@ -55,11 +55,10 @@ int StudentWorld::move()
 
 	nachenblaster->doSomething();
 	//Determines if the object is dead
-	
-    // This code is here merely to allow the game to build, run, and terminate after you hit enter.
-    // Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
-    //decLives();
-    //return GWSTATUS_PLAYER_DIED;
+	if (!nachenblaster->isAlive()) {
+		decLives();
+		return GWSTATUS_PLAYER_DIED;
+	}
 	return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -82,18 +81,18 @@ bool StudentWorld::createAlien() {
 	return true;
 }
 
-//Dummy function
 Alien* StudentWorld::createNewAlien() {
-	int i = randInt(1, 3);
-	switch (i) {
-	case 1: 
+	int s1 = 60;
+	int s2 = 20 + getLevel() * 5;
+	int s3 = 5 + getLevel() * 10;
+	int s = s1 + s2 + s3;
+	int value = randInt(1, s);
+	if (value <= s1)
 		return new Smallgon(this);
-	case 2: 
+	else if (value > s1 && value <= (s1 + s2))
 		return new Smoregon(this);
-	case 3: 
+	else
 		return new Snagglegon(this);
-	}
-	return new Smallgon(this);
 }
 
 bool StudentWorld::playerInLineOfFire(const Actor* a) {
