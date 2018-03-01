@@ -78,6 +78,8 @@ int NachenBlaster::hitPoints() const {
 
 void NachenBlaster::sufferDamage(int damage) {
 	m_hitPoints -= damage;
+	if (m_hitPoints <= 0)
+		setAlive(false);
 }
 
 Star::Star(int startX, int startY, StudentWorld* s)
@@ -180,6 +182,14 @@ void Alien::sufferDamage(int cause, Actor* a) {
 		//Increase player's score
 		//Introduce a new explosion object
 	}
+	if (cause == COLLISION_WITH_PROJECTILE) {
+		cout << "Attacked Aliens" << endl;
+		m_hitPoints -= 2;   //figure out how to differentiate between cabbages/torpedoes
+		if (m_hitPoints <= 0) {
+			//Increase player's score depending on type of alien this is! virtual function here
+			setAlive(false);
+		}
+	}
 }
 
 Smallgon::Smallgon(StudentWorld *s) 
@@ -243,9 +253,12 @@ bool Projectile::isProjectile() const {
 
 void Projectile::sufferDamage(int cause, Actor* a) {
 	if (cause == COLLISION_WITH_PLAYER) {
-		static_cast<NachenBlaster*>(a)->sufferDamage(2); //Figure out how to differentiate between turnips/torpedoes
-		setAlive(false);
+		static_cast<NachenBlaster*>(a)->sufferDamage(2); //Figure out how to differentiate between turnips/torpedoes	
 	}
+	else if (cause == COLLISION_WITH_ALIEN) {
+		static_cast<Alien*>(a)->sufferDamage(COLLISION_WITH_PROJECTILE, this);
+	}
+	setAlive(false);
 }
 Cabbage::Cabbage(StudentWorld* s, int startX, int startY)
 	: Projectile(s, startX, startY, IID_CABBAGE, 0) {}
