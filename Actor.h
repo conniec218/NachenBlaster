@@ -15,6 +15,8 @@ public:
 	bool isAlive() const;
 	bool setAlive(bool alive);
 	bool virtual isAlien() const;
+	bool virtual isProjectile() const;
+	bool virtual isStar() const;
 private:
 	StudentWorld* m_studentWorld; 
 	bool m_isAlive;
@@ -24,6 +26,8 @@ class NachenBlaster : public Actor {
 public:
 	NachenBlaster(StudentWorld* s);
 	void doSomething();
+	int hitPoints() const;
+	void sufferDamage(int damage);
 private:
 	int m_hitPoints;
 	int m_cabbagePoints;
@@ -34,6 +38,7 @@ class Star : public Actor {
 public:
 	Star(int startX, int startY, StudentWorld* s);
 	void doSomething();
+	bool isStar() const;
 };
 
 class Alien : public Actor {
@@ -47,13 +52,15 @@ public:
 	void setNewFlightPlan();
 	bool isAlien() const;
 	bool virtual reactToPlayerInLineOfFire() = 0;
-	//void sufferDamage();
+	int hitPoints() const;
+	void sufferDamage(int cause, Actor* a);
 private:
 	double m_travelSpeed;
 	int m_flightLength;
 	//m_xDirection and m_yDirection must be either 1 or 0 or -1
 	int m_xDirection;
 	int m_yDirection;
+	int m_hitPoints;  //Don't forget to initialize hit points for aliens! Different depending on level, and snaggle is different from smore/small- init function or something
 };
 
 class Smallgon : public Alien {
@@ -81,6 +88,7 @@ public:
 	bool virtual OutofBounds() const = 0;
 	void virtual moveProjectile() = 0;
 	void virtual rotateProjectile();
+	bool virtual isProjectile() const;
 };
 
 class Cabbage : public Projectile {

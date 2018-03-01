@@ -5,6 +5,7 @@
 #include <string>
 using namespace std;
 
+
 GameWorld* createStudentWorld(string assetDir)
 {
 	return new StudentWorld(assetDir);
@@ -102,4 +103,39 @@ bool StudentWorld::playerInLineOfFire(const Actor* a) {
 	}
 	cout << "PLF False" << endl;
 	return false;
+}
+
+int StudentWorld::checkForCollisions(Actor* a) {
+	int distancex, distancey;
+	double distance;
+	distancex = ((nachenblaster)->getX() - a->getX()) * ((nachenblaster)->getX() - a->getX());
+	distancey = ((nachenblaster)->getY() - a->getY()) * ((nachenblaster)->getY() - a->getY());
+	distance = sqrt(distancex - distancey);
+
+	if (distance < .75 * (a->getRadius() + (nachenblaster)->getRadius())) {
+		if(a->isAlien())
+			static_cast<Alien*>(a)->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
+	}
+	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end(); it++) {
+		//cout << !(*it)->isStar() << endl;
+		if((*it)->isAlive() && (*it) != a && !(*it)->isStar()){
+				cout << "Valid actor" << endl;
+				distancex = ((*it)->getX() - a->getX()) * ((*it)->getX() - a->getX());
+				distancey = ((*it)->getY() - a->getY()) * ((*it)->getY() - a->getY());
+				distance = sqrt(distancex - distancey);
+				
+				if (distance < .75 * (a->getRadius() + (*it)->getRadius())) {
+					cout << "Collision occurred" << endl;
+					if (a->isAlien()) {
+						;
+					}
+					//static_cast<Alien*>(*it)->sufferDamage();  //call suffer damage for both!
+					else if ((*it) == nachenblaster)
+						;//call suffer damage for both
+					else if ((*it)->isProjectile())
+						;//call suffer damage for both! may have to differentiate between shot by alien and shot by nachenblaster
+			}
+		}
+	}
+	return NO_COLLISION;
 }

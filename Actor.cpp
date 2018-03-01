@@ -9,13 +9,29 @@ using Direction = int;
 Actor::Actor(StudentWorld* s, int imageID, int startX, int startY, Direction dir, double size, unsigned int depth)
 	: GraphObject(imageID, startX, startY, dir, size, depth), m_studentWorld(s), m_isAlive(true) {}
 
-
 StudentWorld* Actor::getWorld() {
 	return m_studentWorld;
 }
 
 bool Actor::isAlive() const {
 	return m_isAlive;
+}
+
+bool Actor::setAlive(bool alive) {
+	m_isAlive = alive;
+	return m_isAlive;
+}
+
+bool Actor::isAlien() const {
+	return false;
+}
+
+bool Actor::isProjectile() const {
+	return false;
+}
+
+bool Actor::isStar() const {
+	return false;
 }
 
 NachenBlaster::NachenBlaster(StudentWorld* s)
@@ -56,13 +72,12 @@ void NachenBlaster::doSomething() {
 	return;
 }
 
-bool Actor::setAlive(bool alive) {
-	m_isAlive = alive;
-	return m_isAlive;
+int NachenBlaster::hitPoints() const {
+	return m_hitPoints;
 }
 
-bool Actor::isAlien() const {
-	return false;
+void NachenBlaster::sufferDamage(int damage) {
+	m_hitPoints -= damage;
 }
 
 Star::Star(int startX, int startY, StudentWorld* s)
@@ -70,6 +85,10 @@ Star::Star(int startX, int startY, StudentWorld* s)
 
 void Star::doSomething() {
 	moveTo(getX() - 1, getY());
+}
+
+bool Star::isStar() const {
+	return true;
 }
 
 Alien::Alien(StudentWorld* s, double travelSpeed, int flightLength, int IMAGE_ID, int xDirection, int yDirection)
@@ -84,13 +103,15 @@ void Alien::doSomething() {
 		setAlive(false);
 		return;
 	}
+	getWorld()->checkForCollisions(this);
 	if (needsNewFlightPlan())
 		setNewFlightPlan();
 	//#5
-	if (!getWorld()->playerInLineOfFire(this) || !reactToPlayerInLineOfFire()) {
+	/*if (!getWorld()->playerInLineOfFire(this) || !reactToPlayerInLineOfFire()) {
 			moveTo(getX() + (m_xDirection * travelSpeed()), getY() + (m_yDirection * travelSpeed()));
 			m_flightLength--;
-		}
+		}*/
+	moveTo(getX() - 1, getY());
 }
 
 void Alien::flightPlan(int &x, int& y) {
@@ -146,6 +167,20 @@ bool Alien::isAlien() const {
 	return true;
 }
 
+int Alien::hitPoints() const {
+	return m_hitPoints;
+}
+
+void Alien::sufferDamage(int cause, Actor* a) {
+	if (cause == COLLISION_WITH_PLAYER) {
+		static_cast<NachenBlaster*>(a)->sufferDamage(5);   //Figure out how to differentiate between aliens
+		setAlive(false);
+		cout << "Suffered damage" << endl;
+		//Increase player's score
+		//Introduce a new explosion object
+	}
+}
+
 Smallgon::Smallgon(StudentWorld *s) 
 : Alien(s, 2.0, 0, IID_SMALLGON) {}
 
@@ -198,6 +233,10 @@ void Projectile::doSomething() {
 
 void Projectile::rotateProjectile() {
 	setDirection(getDirection() + 20);
+}
+
+bool Projectile::isProjectile() const {
+	return true;
 }
 
 Cabbage::Cabbage(StudentWorld* s, int startX, int startY)
