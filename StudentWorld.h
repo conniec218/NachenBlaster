@@ -5,10 +5,9 @@
 #include <list>
 #include <string>
 
-const int COLLISION_WITH_ALIEN = 1;
+const int COLLISION_WITH_TORPEDO = 1;
 const int COLLISION_WITH_PROJECTILE = 2;
 const int COLLISION_WITH_PLAYER = 3;
-const int COLLISION_WITH_TORPEDO = 4;
 const int NO_COLLISION = -1;
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
@@ -30,7 +29,7 @@ public:
 	bool createAlien();
 	Alien* createNewAlien();
 	bool playerInLineOfFire(const Actor* a);
-	int checkForCollisions(Alien* a);
+	void checkForCollisions(Alien* a);
 	int checkForCollisions(Projectile* p);
 
 private:

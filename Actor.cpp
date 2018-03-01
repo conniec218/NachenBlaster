@@ -98,7 +98,6 @@ Alien::Alien(StudentWorld* s, double travelSpeed, int flightLength, int IMAGE_ID
 	m_xDirection(xDirection), m_yDirection(yDirection) {}
 
 void Alien::doSomething() {
-	//For smoregon/smallgon
 	if (!isAlive())
 		return;
 	if (getX() < 0) {
@@ -109,12 +108,15 @@ void Alien::doSomething() {
 	if (needsNewFlightPlan())
 		setNewFlightPlan();
 	//#5
-	/*if (!getWorld()->playerInLineOfFire(this) || !reactToPlayerInLineOfFire()) {
+	if (!getWorld()->playerInLineOfFire(this) || !reactToPlayerInLineOfFire()) {
 			moveTo(getX() + (m_xDirection * travelSpeed()), getY() + (m_yDirection * travelSpeed()));
 			m_flightLength--;
-		}*/
-	reactToPlayerInLineOfFire();
-	moveTo(getX() - 1, getY());
+		}
+	getWorld()->checkForCollisions(this);
+	//Simple movements
+	//reactToPlayerInLineOfFire();
+	//moveTo(getX() - 1, getY());
+
 }
 
 void Alien::flightPlan(int &x, int& y) {
@@ -176,22 +178,34 @@ int Alien::hitPoints() const {
 
 void Alien::sufferDamage(int cause, Actor* a) {
 	if (cause == COLLISION_WITH_PLAYER) {
-		static_cast<NachenBlaster*>(a)->sufferDamage(5);   //Figure out how to differentiate between aliens
+		if(isSnagglegon())
+			static_cast<NachenBlaster*>(a)->sufferDamage(5);   //Figure out how to differentiate between aliens
+		else
+			static_cast<NachenBlaster*>(a)->sufferDamage(15);
 		setAlive(false);
-		cout << "Suffered damage" << endl;
+		return;
+		cout << "Alien hit player" << endl;
 		//Increase player's score
 		//Introduce a new explosion object
 	}
 	if (cause == COLLISION_WITH_PROJECTILE) {
-		cout << "Attacked Aliens" << endl;
-		m_hitPoints -= 2;   //figure out how to differentiate between cabbages/torpedoes
-		if (m_hitPoints <= 0) {
-			//Increase player's score depending on type of alien this is! virtual function here
-			setAlive(false);
-		}
+		cout << "Alien hit with cabbage" << endl;
+		m_hitPoints -= 2;  
+	}
+	else if (cause == COLLISION_WITH_TORPEDO) {
+		cout << "Alien hit with torpedo" << endl;
+		m_hitPoints -= 8;
+	}
+	a->setAlive(false);
+	if (m_hitPoints <= 0) {
+		//Increase player's score depending on type of alien this is! virtual function here
+		setAlive(false);
 	}
 }
 
+bool Alien::isSnagglegon() const {
+	return false;
+}
 Smallgon::Smallgon(StudentWorld *s) 
 : Alien(s, 2.0, 0, IID_SMALLGON) {}
 
@@ -228,6 +242,10 @@ bool Snagglegon::reactToPlayerInLineOfFire() {
 	return false;
 }
 
+bool Snagglegon::isSnagglegon() const {
+	return true;
+}
+
 Projectile::Projectile(StudentWorld* s, int startX, int startY, int IMAGE_ID, Direction dir)
 	: Actor(s, IMAGE_ID, startX, startY, dir, .5, 1) {}
 
@@ -238,8 +256,9 @@ void Projectile::doSomething() {
 		setAlive(false);
 		return;
 	}
-	if(shotByAlien())
-		getWorld()->checkForCollisions(this);
+	if (shotByAlien())
+		if (getWorld()->checkForCollisions(this) != NO_COLLISION)
+			return;
 	moveProjectile();
 	rotateProjectile();
 }
@@ -253,11 +272,13 @@ bool Projectile::isProjectile() const {
 }
 
 void Projectile::sufferDamage(int cause, Actor* a) {
-	if (cause == COLLISION_WITH_PLAYER) {
-		static_cast<NachenBlaster*>(a)->sufferDamage(2); //Figure out how to differentiate between turnips/torpedoes	
+	if (cause == COLLISION_WITH_PROJECTILE) {
+		cout << "player hit turnip" << endl;
+		static_cast<NachenBlaster*>(a)->sufferDamage(2); 	
 	}
-	else if (cause == COLLISION_WITH_ALIEN) {
-		static_cast<Alien*>(a)->sufferDamage(COLLISION_WITH_PROJECTILE, this);
+	else if (cause == COLLISION_WITH_TORPEDO) {
+		cout << "player hit torpedo" << endl;
+		static_cast<NachenBlaster*>(a)->sufferDamage(8);
 	}
 	setAlive(false);
 }

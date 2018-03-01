@@ -105,8 +105,8 @@ bool StudentWorld::playerInLineOfFire(const Actor* a) {
 	return false;
 }
 
-int StudentWorld::checkForCollisions(Alien* a) {
-	int distancex, distancey;
+void StudentWorld::checkForCollisions(Alien* a) {
+	double distancex, distancey;
 	double distance;
 	distancex = ((nachenblaster)->getX() - a->getX()) * ((nachenblaster)->getX() - a->getX());
 	distancey = ((nachenblaster)->getY() - a->getY()) * ((nachenblaster)->getY() - a->getY());
@@ -120,21 +120,34 @@ int StudentWorld::checkForCollisions(Alien* a) {
 				distancey = ((*it)->getY() - a->getY()) * ((*it)->getY() - a->getY());
 				distance = sqrt(distancex - distancey);
 				if (distance < .75 * (a->getRadius() + (*it)->getRadius()))
+					//Did it collide with a nachenblaster-fired cabbage/torpedo?
 						if((*it)->isProjectile() && !static_cast<Projectile*>(*it)->shotByAlien())
-							static_cast<Projectile*>(*it)->sufferDamage(COLLISION_WITH_ALIEN, *it);
+							if (static_cast<Projectile*>(*it)->isTorpedo()) {
+								a->sufferDamage(COLLISION_WITH_TORPEDO, *it);
+							}
+							else {
+								a->sufferDamage(COLLISION_WITH_PROJECTILE, *it);
+							}
 		}
 	}
-	return NO_COLLISION;
 }
 
+//Called by Alien-fired projectiles only
 int StudentWorld::checkForCollisions(Projectile* p) {
-	int distancex, distancey;
+	double distancex, distancey;
 	double distance;
 	distancex = ((nachenblaster)->getX() - p->getX()) * ((nachenblaster)->getX() - p->getX());
 	distancey = ((nachenblaster)->getY() - p->getY()) * ((nachenblaster)->getY() - p->getY());
 	distance = sqrt(distancex - distancey);
 	if (distance < .75 * (p->getRadius() + (nachenblaster)->getRadius()))
-		p->sufferDamage(COLLISION_WITH_PLAYER, nachenblaster);
+		if (p->isTorpedo()) {
+			p->sufferDamage(COLLISION_WITH_TORPEDO, nachenblaster);
+			return COLLISION_WITH_TORPEDO;
+		}
+		else {
+			p->sufferDamage(COLLISION_WITH_PROJECTILE, nachenblaster);
+			return COLLISION_WITH_PROJECTILE;
+		}
 	return NO_COLLISION;
 }
 

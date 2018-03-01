@@ -54,6 +54,7 @@ public:
 	bool virtual reactToPlayerInLineOfFire() = 0;
 	int hitPoints() const;
 	void sufferDamage(int cause, Actor* a);
+	bool virtual isSnagglegon() const;
 private:
 	double m_travelSpeed;
 	int m_flightLength;
@@ -79,6 +80,7 @@ class Snagglegon : public Alien {
 public:
 	Snagglegon(StudentWorld *s);
 	bool reactToPlayerInLineOfFire();
+	bool isSnagglegon() const;
 };
 
 class Projectile : public Actor {
