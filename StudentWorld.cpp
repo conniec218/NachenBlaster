@@ -31,11 +31,6 @@ int StudentWorld::init()
 	for (int i = 0; i < 30; i++) {
 		addActorToList(new Star(randInt(0, VIEW_WIDTH-1), randInt(0, VIEW_HEIGHT-1), this));
 	}
-
-	//create a new alien! dummy function
-	if (createAlien())
-		addActorToList(createNewAlien());
-
     return GWSTATUS_CONTINUE_GAME;
 }
 
