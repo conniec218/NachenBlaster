@@ -210,15 +210,19 @@ int Alien::hitPoints() const {
 
 void Alien::sufferDamage(int cause, Actor* a) {
 	if (cause == COLLISION_WITH_PLAYER) {
-		if(isSnagglegon())
-			static_cast<NachenBlaster*>(a)->sufferDamage(5);   
-		else
+		if (isSnagglegon()) {
+			static_cast<NachenBlaster*>(a)->sufferDamage(5);
+			getWorld()->increaseScore(1000);
+		}
+		else {
 			static_cast<NachenBlaster*>(a)->sufferDamage(15);
+			getWorld()->increaseScore(250);
+		}
 		setAlive(false);
+		getWorld()->addActorToList(new Explosion(getWorld(), getX(), getY()));
 		getWorld()->killedAnAlien();
+		
 		return;
-		//Increase player's score
-		//Introduce a new explosion object
 	}
 	if (cause == COLLISION_WITH_PROJECTILE) {
 		m_hitPoints -= 2;  
@@ -226,12 +230,17 @@ void Alien::sufferDamage(int cause, Actor* a) {
 	else if (cause == COLLISION_WITH_TORPEDO) {
 		m_hitPoints -= 8;
 	}
+	//Sets projectile to dead
 	a->setAlive(false);
 	if (m_hitPoints <= 0) {
 		//Increase player's score depending on type of alien this is! virtual function here
 		setAlive(false);
+		getWorld()->addActorToList(new Explosion(getWorld(), getX(), getY()));
 		getWorld()->killedAnAlien();
-		cout << "Alien died 2" << endl;
+		if (isSnagglegon())
+			getWorld()->increaseScore(1000);
+		else
+			getWorld()->increaseScore(250);
 	}
 }
 
@@ -308,11 +317,9 @@ bool Projectile::isProjectile() const {
 
 void Projectile::sufferDamage(int cause, Actor* a) {
 	if (cause == COLLISION_WITH_PROJECTILE) {
-		cout << "player hit turnip" << endl;
 		static_cast<NachenBlaster*>(a)->sufferDamage(2); 	
 	}
 	else if (cause == COLLISION_WITH_TORPEDO) {
-		cout << "player hit torpedo" << endl;
 		static_cast<NachenBlaster*>(a)->sufferDamage(8);
 	}
 	setAlive(false);
@@ -378,11 +385,14 @@ bool Flatulence_Torpedo::isTorpedo() const {
 }
 
 Explosion::Explosion(StudentWorld* s, int startX, int startY)
-	: Actor(s, IID_EXPLOSION, startX, startY), m_ticksPassed(0) {}
+	: Actor(s, IID_EXPLOSION, startX, startY), m_ticksPassed(1) {}
 
 void Explosion::doSomething() {
+	if (m_ticksPassed == 4) {
+		setAlive(false);
+		return;
+	}
 	setSize(getSize() * 1.5);
 	m_ticksPassed++;
-	if (m_ticksPassed == 4)
-		setAlive(false);
+	
 }
