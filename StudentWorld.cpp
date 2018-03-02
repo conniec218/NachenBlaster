@@ -52,6 +52,7 @@ int StudentWorld::move()
 				return GWSTATUS_PLAYER_DIED;
 			}
 			if (aliensKilled() == nAliensToAdvance()) {
+				playSound(SOUND_FINISHED_LEVEL);
 				return GWSTATUS_FINISHED_LEVEL;
 			}
 		}
@@ -65,7 +66,11 @@ int StudentWorld::move()
 	if (randInt(1, 15) == 8)
 		addActorToList(new Star(VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1), this));
 	if (createAlien())
-		addActorToList(createNewAlien());	
+		addActorToList(createNewAlien());
+	cout << "Aliens to advance: " << m_nAliensToAdvance << endl;
+	cout << "m_maxAliensOnScreen: " << m_maxAliensOnScreen << endl;
+	cout << "m_aliensOnScreen: " << m_aliensOnScreen << endl;
+	cout << "aliens killed: " << m_aliensKilled << endl;
 	return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -151,10 +156,12 @@ int StudentWorld::checkForCollisions(Projectile* p) {
 	distance = sqrt(distancex + distancey);
 	if (distance < .75 * (p->getRadius() + (nachenblaster)->getRadius()))
 		if (p->isTorpedo()) {
+			playSound(SOUND_BLAST);
 			p->sufferDamage(COLLISION_WITH_TORPEDO, nachenblaster);
 			return COLLISION_WITH_TORPEDO;
 		}
 		else {
+			playSound(SOUND_BLAST);
 			p->sufferDamage(COLLISION_WITH_PROJECTILE, nachenblaster);
 			return COLLISION_WITH_PROJECTILE;
 		}
@@ -184,6 +191,7 @@ int StudentWorld::nAliensToAdvance() const {
 }
 
 void StudentWorld::killedAnAlien() {
+	playSound(SOUND_DEATH);
 	m_aliensKilled++;
 	m_aliensOnScreen--;
 }

@@ -39,7 +39,6 @@ NachenBlaster::NachenBlaster(StudentWorld* s)
 void NachenBlaster::doSomething() {
 	if (cabbagePoints() < 30) {
 		addCabbagePoint();
-		cout << "added one" << endl;
 	}
 	if (m_hitPoints <= 0)
 		return;
@@ -64,7 +63,6 @@ void NachenBlaster::doSomething() {
 			break;
 		case KEY_PRESS_SPACE:
 			if (cabbagePoints() >= 5) {
-				cout << "shoot cabbage" << endl;
 				shootCabbage();
 			}
 			break;
@@ -90,7 +88,6 @@ void NachenBlaster::recoverHitPoints(int amt)
 
 void NachenBlaster::sufferDamage(int damage) {
 	m_hitPoints -= damage;
-	cout << "suffered damag health left: " << m_hitPoints << endl;
 	if (m_hitPoints <= 0)
 		setAlive(false);
 }
@@ -115,12 +112,13 @@ void NachenBlaster::getTorpedoes(int amt)
 }
 
 void NachenBlaster::shootCabbage() {
+	getWorld()->playSound(SOUND_PLAYER_SHOOT);
 	m_cabbagePoints -= 5;
-	cout << "minu 5 cabbage points " << m_cabbagePoints << endl;
 	getWorld()->addActorToList(new Cabbage(getWorld(), getX() + 12, getY()));
 }
 
 void NachenBlaster::shootTorpedo() {
+	getWorld()->playSound(SOUND_TORPEDO);
 	m_torpedoInventory--;
 	getWorld()->addActorToList(new Flatulence_Torpedo(false, getWorld(), getX() + 12, getY(), 0));
 }
@@ -151,17 +149,12 @@ void Alien::doSomething() {
 	getWorld()->checkForCollisions(this);
 	if (needsNewFlightPlan())
 		setNewFlightPlan();
-	//#5
 	if (!getWorld()->playerInLineOfFire(this) || !reactToPlayerInLineOfFire()) {
 			moveTo(getX() + (m_xDirection * travelSpeed()), getY() + (m_yDirection * travelSpeed()));
 			m_flightLength--;
 		}
 
 	getWorld()->checkForCollisions(this);
-	//Simple movements
-	//reactToPlayerInLineOfFire();
-	//moveTo(getX() - 1, getY());
-
 }
 
 void Alien::flightPlan(int &x, int& y) {
@@ -235,7 +228,6 @@ void Alien::sufferDamage(int cause, Actor* a) {
 		getWorld()->addActorToList(new Explosion(getWorld(), getX(), getY()));
 		possiblyDropGoodie();
 		getWorld()->killedAnAlien();
-		
 		return;
 	}
 	if (cause == COLLISION_WITH_PROJECTILE) {
@@ -257,6 +249,8 @@ void Alien::sufferDamage(int cause, Actor* a) {
 		else
 			getWorld()->increaseScore(250);
 	}
+	else
+		getWorld()->playSound(SOUND_BLAST);
 }
 
 bool Alien::isSnagglegon() const {
@@ -269,6 +263,7 @@ Smallgon::Smallgon(double hitPoints, StudentWorld *s)
 bool Smallgon::reactToPlayerInLineOfFire() {
 	//Returns true if a projectile was shot
 	if (randInt(1, 20 / (getWorld()->getLevel()) + 5) == 1) {
+		getWorld()->playSound(SOUND_ALIEN_SHOOT);
 		getWorld()->addActorToList(new Turnip(getWorld(), getX() - 14, getY()));
 		return true;
 	}
@@ -276,6 +271,7 @@ bool Smallgon::reactToPlayerInLineOfFire() {
 }
 
 void Smallgon::possiblyDropGoodie() {
+	cout << "possibly drop goodie" << endl;
 	return;
 }
 
@@ -285,6 +281,7 @@ Smoregon::Smoregon(double hitPoints, StudentWorld *s)
 bool Smoregon::reactToPlayerInLineOfFire() {
 	//Returns true if a projectile was shot
 	if (randInt(1, 15 / (getWorld()->getLevel()) + 5) == 1) {
+		getWorld()->playSound(SOUND_ALIEN_SHOOT);
 		getWorld()->addActorToList(new Turnip(getWorld(), getX() - 14, getY()));
 		return true;
 	}
@@ -292,6 +289,7 @@ bool Smoregon::reactToPlayerInLineOfFire() {
 }
 
 void Smoregon::possiblyDropGoodie() {
+	cout << "possiblyDropGoodie" << endl;
 	if (randInt(1, 3) == 1) {
 		if (randInt(1, 2) == 1) {
 			cout << "dropped repair goodie" << endl;
@@ -310,6 +308,7 @@ Snagglegon::Snagglegon(double hitPoints, StudentWorld *s)
 bool Snagglegon::reactToPlayerInLineOfFire() {
 	//Returns true if a projectile was shot
 	if (randInt(1, 15 / (getWorld()->getLevel()) + 10) == 1) {
+		getWorld()->playSound(SOUND_TORPEDO);
 		getWorld()->addActorToList(new Flatulence_Torpedo(true, getWorld(), getX() - 14, getY(), 180));
 		return true;
 	}
@@ -321,6 +320,7 @@ bool Snagglegon::isSnagglegon() const {
 }
 
 void Snagglegon::possiblyDropGoodie() {
+	cout << "possibly drop goodie" << endl;
 	if (randInt(1, 6) == 1) {
 		cout << "dropped extra life goodie" << endl;
 		getWorld()->addActorToList(new Extra_Life_Goodie(getWorld(), getX(), getY()));
@@ -354,6 +354,7 @@ bool Projectile::isProjectile() const {
 	return true;
 }
 
+//Alien-fired projectile hit the NachenBlaster
 void Projectile::sufferDamage(int cause, Actor* a) {
 	if (cause == COLLISION_WITH_PROJECTILE) {
 		static_cast<NachenBlaster*>(a)->sufferDamage(2); 	
@@ -471,6 +472,7 @@ Repair_Goodie::Repair_Goodie(StudentWorld* s, int startX, int startY)
 	: Goodie(s, startX, startY, IID_REPAIR_GOODIE) {}
 
 void Repair_Goodie::goodiePickedUp(NachenBlaster* n) {
+	getWorld()->playSound(SOUND_GOODIE);
 	n->recoverHitPoints(10);
 }
 
@@ -478,6 +480,7 @@ Flatulence_Torpedo_Goodie::Flatulence_Torpedo_Goodie(StudentWorld* s, int startX
 	: Goodie(s, startX, startY, IID_REPAIR_GOODIE) {}
 
 void Flatulence_Torpedo_Goodie::goodiePickedUp(NachenBlaster* n) {
+	getWorld()->playSound(SOUND_GOODIE);
 	n->getTorpedoes(5);
 }
 
@@ -485,6 +488,7 @@ Extra_Life_Goodie::Extra_Life_Goodie(StudentWorld* s, int startX, int startY)
 	: Goodie(s, startX, startY, IID_LIFE_GOODIE) {}
 
 void Extra_Life_Goodie::goodiePickedUp(NachenBlaster* n) {
+	getWorld()->playSound(SOUND_GOODIE);
 	getWorld()->incLives();
 }
 
