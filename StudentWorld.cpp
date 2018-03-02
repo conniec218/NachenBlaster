@@ -87,13 +87,9 @@ void StudentWorld::addActorToList(Actor* a) {
 }
 
 bool StudentWorld::createAlien() {
-	cout << "Aliens to advance" << nAliensToAdvance() << endl;
-	cout << "aliens killed" << aliensKilled() << endl;
-	cout << "maxAliensOnScreen" << maxAliensOnScreen() << endl;
 	int r = nAliensToAdvance() - aliensKilled();
 	int m = maxAliensOnScreen();
 	bool a = aliensOnScreen() < min(m, r);
-	cout << "create a new alien? " << a << endl;
 	return a;
 }
 
@@ -213,10 +209,10 @@ string StudentWorld::updateStatusBar()
 { 
 	std::ostringstream status_bar;
 	status_bar << "Lives: " << getLives() << "  " << 
-		"Health: " << 100-(nachenblaster->hitPoints()/50) << "%  " << 
+		"Health: " << int((nachenblaster->hitPoints()/50.0) * 100) << "%  " << 
 		"Score: " << getScore() << "  " << 
 		"Level: " << getLevel() << "  " << 
-		"Cabbages: " << 100-(nachenblaster->cabbagePoints()/30) << "  " <<
+		"Cabbages: " << int((nachenblaster->cabbagePoints()/30.0) * 100)<< "%  " <<
 		"Torpedoes: " << nachenblaster->torpedoInventory();
 	string s = status_bar.str();
 	return s;

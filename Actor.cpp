@@ -37,8 +37,10 @@ NachenBlaster::NachenBlaster(StudentWorld* s)
 	: Actor(s,IID_NACHENBLASTER, 0, 128, 0, 1.0, 0), m_hitPoints(50), m_cabbagePoints(30), m_torpedoInventory(0) {}
 
 void NachenBlaster::doSomething() {
-	if(cabbagePoints() < 30)
+	if (cabbagePoints() < 30) {
 		addCabbagePoint();
+		cout << "added one" << endl;
+	}
 	if (m_hitPoints <= 0)
 		return;
 	int ch;
@@ -62,6 +64,7 @@ void NachenBlaster::doSomething() {
 			break;
 		case KEY_PRESS_SPACE:
 			if (cabbagePoints() >= 5) {
+				cout << "shoot cabbage" << endl;
 				shootCabbage();
 			}
 			break;
@@ -79,6 +82,7 @@ int NachenBlaster::hitPoints() const {
 
 void NachenBlaster::sufferDamage(int damage) {
 	m_hitPoints -= damage;
+	cout << "suffered damag health left: " << m_hitPoints << endl;
 	if (m_hitPoints <= 0)
 		setAlive(false);
 }
@@ -99,6 +103,7 @@ int NachenBlaster::torpedoInventory() const {
 
 void NachenBlaster::shootCabbage() {
 	m_cabbagePoints -= 5;
+	cout << "minu 5 cabbage points " << m_cabbagePoints << endl;
 	getWorld()->addActorToList(new Cabbage(getWorld(), getX() + 12, getY()));
 }
 
@@ -128,7 +133,6 @@ void Alien::doSomething() {
 	if (getX() < 0) {
 		setAlive(false);
 		getWorld()->decAliensOnScreen();
-		cout << "Alien died 3" << endl;
 		return;
 	}
 	getWorld()->checkForCollisions(this);
@@ -206,24 +210,20 @@ int Alien::hitPoints() const {
 
 void Alien::sufferDamage(int cause, Actor* a) {
 	if (cause == COLLISION_WITH_PLAYER) {
-		cout << "Collision with player" << endl;
 		if(isSnagglegon())
 			static_cast<NachenBlaster*>(a)->sufferDamage(5);   
 		else
 			static_cast<NachenBlaster*>(a)->sufferDamage(15);
 		setAlive(false);
 		getWorld()->killedAnAlien();
-		cout << "Alien died 1" << endl;
 		return;
 		//Increase player's score
 		//Introduce a new explosion object
 	}
 	if (cause == COLLISION_WITH_PROJECTILE) {
-		cout << "Alien hit with cabbage. Hit points left: " << hitPoints() << endl;
 		m_hitPoints -= 2;  
 	}
 	else if (cause == COLLISION_WITH_TORPEDO) {
-		cout << "Alien hit with torpedo" << endl;
 		m_hitPoints -= 8;
 	}
 	a->setAlive(false);
