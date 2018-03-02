@@ -128,4 +128,12 @@ public:
 private:
 	bool m_shotByAlien;
 };
+
+class Explosion : public Actor {
+public:
+	Explosion(StudentWorld* s, int start, int startY);
+	void doSomething();
+private:
+	int m_ticksPassed;
+};
 #endif // ACTOR_H_

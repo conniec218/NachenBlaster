@@ -376,3 +376,13 @@ bool Flatulence_Torpedo::shotByAlien() const {
 bool Flatulence_Torpedo::isTorpedo() const {
 	return true;
 }
+
+Explosion::Explosion(StudentWorld* s, int startX, int startY)
+	: Actor(s, IID_EXPLOSION, startX, startY), m_ticksPassed(0) {}
+
+void Explosion::doSomething() {
+	setSize(getSize() * 1.5);
+	m_ticksPassed++;
+	if (m_ticksPassed == 4)
+		setAlive(false);
+}
