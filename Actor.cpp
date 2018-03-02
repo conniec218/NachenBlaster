@@ -80,6 +80,14 @@ int NachenBlaster::hitPoints() const {
 	return m_hitPoints;
 }
 
+void NachenBlaster::recoverHitPoints(int amt) 
+{
+	if (hitPoints() + amt <= 50)
+		m_hitPoints += amt;
+	else
+		m_hitPoints = 50;
+}
+
 void NachenBlaster::sufferDamage(int damage) {
 	m_hitPoints -= damage;
 	cout << "suffered damag health left: " << m_hitPoints << endl;
@@ -99,6 +107,11 @@ void NachenBlaster::addCabbagePoint()
 
 int NachenBlaster::torpedoInventory() const {
 	return m_torpedoInventory;
+}
+
+void NachenBlaster::getTorpedoes(int amt)
+{
+	m_torpedoInventory += amt;
 }
 
 void NachenBlaster::shootCabbage() {
@@ -220,6 +233,7 @@ void Alien::sufferDamage(int cause, Actor* a) {
 		}
 		setAlive(false);
 		getWorld()->addActorToList(new Explosion(getWorld(), getX(), getY()));
+		possiblyDropGoodie();
 		getWorld()->killedAnAlien();
 		
 		return;
@@ -236,6 +250,7 @@ void Alien::sufferDamage(int cause, Actor* a) {
 		//Increase player's score depending on type of alien this is! virtual function here
 		setAlive(false);
 		getWorld()->addActorToList(new Explosion(getWorld(), getX(), getY()));
+		possiblyDropGoodie();
 		getWorld()->killedAnAlien();
 		if (isSnagglegon())
 			getWorld()->increaseScore(1000);
@@ -247,6 +262,7 @@ void Alien::sufferDamage(int cause, Actor* a) {
 bool Alien::isSnagglegon() const {
 	return false;
 }
+
 Smallgon::Smallgon(double hitPoints, StudentWorld *s) 
 : Alien(hitPoints, s, 2.0, 0, IID_SMALLGON) {}
 
@@ -259,6 +275,10 @@ bool Smallgon::reactToPlayerInLineOfFire() {
 	return false;
 }
 
+void Smallgon::possiblyDropGoodie() {
+	return;
+}
+
 Smoregon::Smoregon(double hitPoints, StudentWorld *s)
 	: Alien(hitPoints, s, 2.0, 0, IID_SMOREGON) {}
 
@@ -269,6 +289,19 @@ bool Smoregon::reactToPlayerInLineOfFire() {
 		return true;
 	}
 	return false;
+}
+
+void Smoregon::possiblyDropGoodie() {
+	if (randInt(1, 3) == 1) {
+		if (randInt(1, 2) == 1) {
+			cout << "dropped repair goodie" << endl;
+			getWorld()->addActorToList(new Repair_Goodie(getWorld(), getX(), getY()));
+		}
+		else {
+			cout << "dropped flatulence goodie" << endl;
+			getWorld()->addActorToList(new Flatulence_Torpedo_Goodie(getWorld(), getX(), getY()));
+		}
+	}
 }
 
 Snagglegon::Snagglegon(double hitPoints, StudentWorld *s)
@@ -287,6 +320,12 @@ bool Snagglegon::isSnagglegon() const {
 	return true;
 }
 
+void Snagglegon::possiblyDropGoodie() {
+	if (randInt(1, 6) == 1) {
+		cout << "dropped extra life goodie" << endl;
+		getWorld()->addActorToList(new Extra_Life_Goodie(getWorld(), getX(), getY()));
+	}
+}
 Projectile::Projectile(StudentWorld* s, int startX, int startY, int IMAGE_ID, Direction dir)
 	: Actor(s, IMAGE_ID, startX, startY, dir, .5, 1) {}
 
@@ -394,5 +433,58 @@ void Explosion::doSomething() {
 	}
 	setSize(getSize() * 1.5);
 	m_ticksPassed++;
-	
 }
+
+Goodie::Goodie(StudentWorld* s, int startX, int startY, int IMAGE_ID)
+	: Actor(s, IMAGE_ID, startX, startY, 0, .5, 1) {}
+
+void Goodie::doSomething() {
+	if (!isAlive())
+		return;
+	if (getX() < 0 || getX() > VIEW_WIDTH || getY() < 0 || getY() > VIEW_HEIGHT) {
+		setAlive(false);
+		return;
+	}
+	NachenBlaster* n = getWorld()->checkForCollisions(this);
+	if(n != nullptr){
+		getWorld()->increaseScore(100);
+		setAlive(false);
+		goodiePickedUp(n);
+		return;
+	}
+	moveGoodie();
+	n = getWorld()->checkForCollisions(this);
+	if(n != nullptr) {
+		getWorld()->increaseScore(100);
+		setAlive(false);
+		goodiePickedUp(n);
+		return;
+	}
+}
+
+void Goodie::moveGoodie()
+{
+	moveTo(getX() - .75, getY() - .75);
+}
+
+Repair_Goodie::Repair_Goodie(StudentWorld* s, int startX, int startY)
+	: Goodie(s, startX, startY, IID_REPAIR_GOODIE) {}
+
+void Repair_Goodie::goodiePickedUp(NachenBlaster* n) {
+	n->recoverHitPoints(10);
+}
+
+Flatulence_Torpedo_Goodie::Flatulence_Torpedo_Goodie(StudentWorld* s, int startX, int startY)
+	: Goodie(s, startX, startY, IID_REPAIR_GOODIE) {}
+
+void Flatulence_Torpedo_Goodie::goodiePickedUp(NachenBlaster* n) {
+	n->getTorpedoes(5);
+}
+
+Extra_Life_Goodie::Extra_Life_Goodie(StudentWorld* s, int startX, int startY)
+	: Goodie(s, startX, startY, IID_LIFE_GOODIE) {}
+
+void Extra_Life_Goodie::goodiePickedUp(NachenBlaster* n) {
+	getWorld()->incLives();
+}
+

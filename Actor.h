@@ -27,12 +27,14 @@ public:
 	NachenBlaster(StudentWorld* s);
 	void doSomething();
 	int hitPoints() const;
+	void recoverHitPoints(int amt);
 	void sufferDamage(int damage);
 	int cabbagePoints() const;
 	void addCabbagePoint();
 	void shootCabbage();
 	void shootTorpedo();
 	int torpedoInventory() const;
+	void getTorpedoes(int amt);
 private:
 	int m_hitPoints;
 	int m_cabbagePoints;
@@ -60,6 +62,7 @@ public:
 	int hitPoints() const;
 	void sufferDamage(int cause, Actor* a);
 	bool virtual isSnagglegon() const;
+	void virtual possiblyDropGoodie() = 0;
 private:
 	double m_travelSpeed;
 	int m_flightLength;
@@ -73,12 +76,14 @@ class Smallgon : public Alien {
 public:
 	Smallgon(double hitPoints, StudentWorld *s);
 	bool reactToPlayerInLineOfFire();
+	void virtual possiblyDropGoodie();
 };
 
 class Smoregon : public Alien {
 public:
 	Smoregon(double hitPoints, StudentWorld *s);
 	bool reactToPlayerInLineOfFire();
+	void virtual possiblyDropGoodie();
 };
 
 class Snagglegon : public Alien {
@@ -86,6 +91,7 @@ public:
 	Snagglegon(double hitPoints, StudentWorld *s);
 	bool reactToPlayerInLineOfFire();
 	bool isSnagglegon() const;
+	void virtual possiblyDropGoodie();
 };
 
 class Projectile : public Actor {
@@ -131,9 +137,36 @@ private:
 
 class Explosion : public Actor {
 public:
-	Explosion(StudentWorld* s, int start, int startY);
+	Explosion(StudentWorld* s, int startX, int startY);
 	void doSomething();
 private:
 	int m_ticksPassed;
 };
+
+class Goodie : public Actor {
+public:
+	Goodie(StudentWorld* s, int startX, int startY, int IMAGE_ID);
+	void doSomething();
+	void virtual goodiePickedUp(NachenBlaster* n) = 0;
+	void moveGoodie();
+};
+
+class Repair_Goodie : public Goodie {
+public:
+	Repair_Goodie(StudentWorld* s, int startX, int startY);
+	void goodiePickedUp(NachenBlaster* n);
+};
+
+class Flatulence_Torpedo_Goodie : public Goodie {
+public:
+	Flatulence_Torpedo_Goodie(StudentWorld* s, int startX, int startY);
+	void goodiePickedUp(NachenBlaster* n);
+};
+
+class Extra_Life_Goodie : public Goodie {
+public:
+	Extra_Life_Goodie(StudentWorld* s, int startX, int startY);
+	void goodiePickedUp(NachenBlaster* n);
+};
+
 #endif // ACTOR_H_

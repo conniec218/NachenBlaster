@@ -17,6 +17,7 @@ class NachenBlaster;
 class Actor;
 class Alien;
 class Projectile;
+class Goodie;
 
 class StudentWorld : public GameWorld
 {
@@ -32,6 +33,7 @@ public:
 	bool playerInLineOfFire(const Actor* a);
 	void checkForCollisions(Alien* a);
 	int checkForCollisions(Projectile* p);
+	NachenBlaster* checkForCollisions(Goodie * g);
 	int aliensKilled() const;
 	int nAliensToAdvance() const;
 	void killedAnAlien();

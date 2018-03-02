@@ -48,12 +48,10 @@ int StudentWorld::move()
 			(*(*it)).doSomething();
 			it++;
 			if (!nachenblaster->isAlive()) {
-				cout << "decLives" << endl;
 				decLives();
 				return GWSTATUS_PLAYER_DIED;
 			}
 			if (aliensKilled() == nAliensToAdvance()) {
-				//increase score?
 				return GWSTATUS_FINISHED_LEVEL;
 			}
 		}
@@ -110,10 +108,8 @@ Alien* StudentWorld::createNewAlien() {
 
 bool StudentWorld::playerInLineOfFire(const Actor* a) {
 	if ((nachenblaster->getX() < a->getX()) && abs(a->getY() - nachenblaster->getY()) <= 4) {
-		cout << "PLF True" << endl;
 		return true;
 	}
-	cout << "PLF False" << endl;
 	return false;
 }
 
@@ -130,18 +126,16 @@ void StudentWorld::checkForCollisions(Alien* a) {
 	}
 	for (list<Actor*>::iterator it = m_actorList.begin(); it != m_actorList.end(); it++) {
 		if((*it)->isAlive() && (*it) != a && !(*it)->isStar()){
-				distancex = ((*it)->getX() - a->getX()) * ((*it)->getX() - a->getX());
-				distancey = ((*it)->getY() - a->getY()) * ((*it)->getY() - a->getY());
-				distance = sqrt(distancex + distancey);
-				if (distance < .75 * (a->getRadius() + (*it)->getRadius()))
-					//Did it collide with a nachenblaster-fired cabbage/torpedo?
-						if((*it)->isProjectile() && !static_cast<Projectile*>(*it)->shotByAlien())
-							if (static_cast<Projectile*>(*it)->isTorpedo()) {
-								a->sufferDamage(COLLISION_WITH_TORPEDO, *it);
-							}
-							else {
-								a->sufferDamage(COLLISION_WITH_PROJECTILE, *it);
-							}
+			distancex = ((*it)->getX() - a->getX()) * ((*it)->getX() - a->getX());
+			distancey = ((*it)->getY() - a->getY()) * ((*it)->getY() - a->getY());
+			distance = sqrt(distancex + distancey);
+			if (distance < .75 * (a->getRadius() + (*it)->getRadius()))
+				//Did it collide with a nachenblaster-fired cabbage/torpedo?
+				if ((*it)->isProjectile() && !static_cast<Projectile*>(*it)->shotByAlien())
+					if (static_cast<Projectile*>(*it)->isTorpedo())
+						a->sufferDamage(COLLISION_WITH_TORPEDO, *it);
+					else
+						a->sufferDamage(COLLISION_WITH_PROJECTILE, *it);
 		}
 	}
 }
@@ -165,6 +159,20 @@ int StudentWorld::checkForCollisions(Projectile* p) {
 			return COLLISION_WITH_PROJECTILE;
 		}
 	return NO_COLLISION;
+}
+
+//check for collisions with nachenblaster
+NachenBlaster* StudentWorld::checkForCollisions(Goodie * g) {
+	if (!g->isAlive() || !nachenblaster->isAlive())
+		return nullptr;
+	double distancex, distancey;
+	double distance;
+	distancex = ((nachenblaster)->getX() - g->getX()) * ((nachenblaster)->getX() - g->getX());
+	distancey = ((nachenblaster)->getY() - g->getY()) * ((nachenblaster)->getY() - g->getY());
+	distance = sqrt(distancex + distancey);
+	if (distance < .75 * (g->getRadius() + (nachenblaster)->getRadius()))
+		return nachenblaster;
+	return nullptr;
 }
 
 int StudentWorld::aliensKilled() const {
