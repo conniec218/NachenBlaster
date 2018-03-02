@@ -62,10 +62,10 @@ int StudentWorld::move()
 		addActorToList(new Star(VIEW_WIDTH-1, randInt(0, VIEW_HEIGHT-1), this));
 	if (createAlien())
 		addActorToList(createNewAlien());
-	cout << "Aliens to advance: " << m_nAliensToAdvance << endl;
+	/*cout << "Aliens to advance: " << m_nAliensToAdvance << endl;
 	cout << "m_maxAliensOnScreen: " << m_maxAliensOnScreen << endl;
 	cout << "m_aliensOnScreen: " << m_aliensOnScreen << endl;
-	cout << "aliens killed: " << m_aliensKilled << endl;
+	cout << "aliens killed: " << m_aliensKilled << endl;*/
 	return GWSTATUS_CONTINUE_GAME;
 }
 

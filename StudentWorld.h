@@ -28,30 +28,30 @@ public:
     virtual int move();
     virtual void cleanUp();
 	void addActorToList(Actor* a);
-	bool createAlien();
-	Alien* createNewAlien();
 	bool playerInLineOfFire(const Actor* a);
 	void checkForCollisions(Alien* a);
 	int checkForCollisions(Projectile* p);
 	NachenBlaster* checkForCollisions(Goodie * g);
-	int aliensKilled() const;
-	int nAliensToAdvance() const;
 	void killedAnAlien();
+	void decAliensOnScreen();
+	
+private:
 	void setInitAlienStats();
+	bool createAlien();
+	Alien* createNewAlien();
+	int aliensKilled() const;
 	int maxAliensOnScreen() const;
+	int nAliensToAdvance() const;
 	int aliensOnScreen() const;
 	void addNewAlienOnScreen();
-	void decAliensOnScreen();
-	std::string updateStatusBar();
 
-private:
+	std::string updateStatusBar();
 	NachenBlaster* nachenblaster;
 	std::list<Actor*> m_actorList;
 	int m_aliensKilled;
 	int m_nAliensToAdvance;
 	int m_maxAliensOnScreen;
 	int m_aliensOnScreen;
-	
 };
 
 #endif // STUDENTWORLD_H_

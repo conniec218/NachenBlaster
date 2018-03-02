@@ -27,15 +27,17 @@ public:
 	NachenBlaster(StudentWorld* s);
 	void doSomething();
 	int hitPoints() const;
-	void recoverHitPoints(int amt);
 	void sufferDamage(int damage);
+	void recoverHitPoints(int amt);
 	int cabbagePoints() const;
+	int torpedoInventory() const;
+	void getTorpedoes(int amt);
+
+private:
 	void addCabbagePoint();
 	void shootCabbage();
 	void shootTorpedo();
-	int torpedoInventory() const;
-	void getTorpedoes(int amt);
-private:
+
 	int m_hitPoints;
 	int m_cabbagePoints;
 	int m_torpedoInventory;
@@ -52,18 +54,18 @@ class Alien : public Actor {
 public: 
 	Alien(double hitPoints, StudentWorld * s, double travelSpeed, int flightLength, int IMAGE_ID, int xDirection = -1, int yDirection = 0);
 	void doSomething();
-	void flightPlan(int &x, int& y); 
-	double travelSpeed() const;
-	int flightLength() const;
-	bool needsNewFlightPlan() const;
-	void setNewFlightPlan();
 	bool isAlien() const;
-	bool virtual reactToPlayerInLineOfFire() = 0;
 	int hitPoints() const;
 	void sufferDamage(int cause, Actor* a);
 	bool virtual isSnagglegon() const;
 	void virtual possiblyDropGoodie() = 0;
 private:
+	bool virtual reactToPlayerInLineOfFire() = 0;
+	bool needsNewFlightPlan() const;
+	void setNewFlightPlan();
+	double travelSpeed() const;
+	int flightLength() const;
+
 	double m_travelSpeed;
 	int m_flightLength;
 	//m_xDirection and m_yDirection must be either 1 or 0 or -1
@@ -75,63 +77,72 @@ private:
 class Smallgon : public Alien {
 public:
 	Smallgon(double hitPoints, StudentWorld *s);
+	void possiblyDropGoodie();
+private:
 	bool reactToPlayerInLineOfFire();
-	void virtual possiblyDropGoodie();
 };
 
 class Smoregon : public Alien {
 public:
 	Smoregon(double hitPoints, StudentWorld *s);
-	bool reactToPlayerInLineOfFire();
 	void virtual possiblyDropGoodie();
+private:
+	bool reactToPlayerInLineOfFire();
 };
 
 class Snagglegon : public Alien {
 public:
 	Snagglegon(double hitPoints, StudentWorld *s);
-	bool reactToPlayerInLineOfFire();
 	bool isSnagglegon() const;
 	void virtual possiblyDropGoodie();
+private:
+	bool reactToPlayerInLineOfFire();
 };
 
 class Projectile : public Actor {
 public:
 	Projectile(StudentWorld* s, int startX, int startY, int IMAGE_ID, Direction dir);
 	void doSomething();  //create a doDifferentiateThing function that is virtual? then specify in cabbage/turnip/flatulence torpedo class. or pure virtual?
+	bool virtual isProjectile() const;
+	void sufferDamage(int cause, Actor* a);
+	bool virtual isTorpedo() const;
+	bool virtual shotByAlien() const = 0;
+private:
 	bool virtual OutofBounds() const = 0;
 	void virtual moveProjectile() = 0;
 	void virtual rotateProjectile();
-	bool virtual isProjectile() const;
-	bool virtual shotByAlien() const = 0;
-	void sufferDamage(int cause, Actor* a);
-	bool virtual isTorpedo() const;
 };
 
 class Cabbage : public Projectile {
 public:
 	Cabbage(StudentWorld * s, int startX, int startY);
-	bool OutofBounds() const;
-	void moveProjectile();
 	bool virtual shotByAlien() const;
+private:
+
+	void moveProjectile();
+	bool OutofBounds() const;
 };
 
 class Turnip : public Projectile {
 public:
 	Turnip(StudentWorld * s, int startX, int startY);
+	bool virtual shotByAlien() const;
+private:
 	bool OutofBounds() const;
 	void moveProjectile();
-	bool virtual shotByAlien() const;
+	
 };
 
 class Flatulence_Torpedo : public Projectile {
 public:
 	Flatulence_Torpedo(bool shotByAlien, StudentWorld * s, int startX, int startY, Direction dir);
+	bool isTorpedo() const;
+	bool virtual shotByAlien() const;
+private:
 	bool OutofBounds() const;
 	void moveProjectile();
 	void rotateProjectile();
-	bool shotByAlien() const;
-	bool isTorpedo() const;
-private:
+	
 	bool m_shotByAlien;
 };
 
@@ -147,25 +158,33 @@ class Goodie : public Actor {
 public:
 	Goodie(StudentWorld* s, int startX, int startY, int IMAGE_ID);
 	void doSomething();
-	void virtual goodiePickedUp(NachenBlaster* n) = 0;
+	
+private:
 	void moveGoodie();
+	void virtual goodiePickedUp(NachenBlaster* n) = 0;
 };
 
 class Repair_Goodie : public Goodie {
 public:
 	Repair_Goodie(StudentWorld* s, int startX, int startY);
+
+private:
 	void goodiePickedUp(NachenBlaster* n);
 };
 
 class Flatulence_Torpedo_Goodie : public Goodie {
 public:
 	Flatulence_Torpedo_Goodie(StudentWorld* s, int startX, int startY);
+
+private:
 	void goodiePickedUp(NachenBlaster* n);
 };
 
 class Extra_Life_Goodie : public Goodie {
 public:
 	Extra_Life_Goodie(StudentWorld* s, int startX, int startY);
+
+private:
 	void goodiePickedUp(NachenBlaster* n);
 };
 

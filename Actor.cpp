@@ -157,11 +157,6 @@ void Alien::doSomething() {
 	getWorld()->checkForCollisions(this);
 }
 
-void Alien::flightPlan(int &x, int& y) {
-	x = m_xDirection;
-	y = m_yDirection;
-}
-
 double Alien::travelSpeed() const {
 	return m_travelSpeed;
 }
@@ -271,7 +266,6 @@ bool Smallgon::reactToPlayerInLineOfFire() {
 }
 
 void Smallgon::possiblyDropGoodie() {
-	cout << "possibly drop goodie" << endl;
 	return;
 }
 
@@ -289,14 +283,11 @@ bool Smoregon::reactToPlayerInLineOfFire() {
 }
 
 void Smoregon::possiblyDropGoodie() {
-	cout << "possiblyDropGoodie" << endl;
 	if (randInt(1, 3) == 1) {
 		if (randInt(1, 2) == 1) {
-			cout << "dropped repair goodie" << endl;
 			getWorld()->addActorToList(new Repair_Goodie(getWorld(), getX(), getY()));
 		}
 		else {
-			cout << "dropped flatulence goodie" << endl;
 			getWorld()->addActorToList(new Flatulence_Torpedo_Goodie(getWorld(), getX(), getY()));
 		}
 	}
@@ -320,9 +311,7 @@ bool Snagglegon::isSnagglegon() const {
 }
 
 void Snagglegon::possiblyDropGoodie() {
-	cout << "possibly drop goodie" << endl;
 	if (randInt(1, 6) == 1) {
-		cout << "dropped extra life goodie" << endl;
 		getWorld()->addActorToList(new Extra_Life_Goodie(getWorld(), getX(), getY()));
 	}
 }
