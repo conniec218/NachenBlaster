@@ -85,7 +85,7 @@ private:
 class Smoregon : public Alien {
 public:
 	Smoregon(double hitPoints, StudentWorld *s);
-	void virtual possiblyDropGoodie();
+	void possiblyDropGoodie();
 private:
 	bool reactToPlayerInLineOfFire();
 };
@@ -102,8 +102,8 @@ private:
 class Projectile : public Actor {
 public:
 	Projectile(StudentWorld* s, int startX, int startY, int IMAGE_ID, Direction dir);
-	void doSomething();  //create a doDifferentiateThing function that is virtual? then specify in cabbage/turnip/flatulence torpedo class. or pure virtual?
-	bool virtual isProjectile() const;
+	void doSomething();  
+	bool isProjectile() const;
 	void sufferDamage(int cause, Actor* a);
 	bool virtual isTorpedo() const;
 	bool virtual shotByAlien() const = 0;
@@ -137,7 +137,7 @@ class Flatulence_Torpedo : public Projectile {
 public:
 	Flatulence_Torpedo(bool shotByAlien, StudentWorld * s, int startX, int startY, Direction dir);
 	bool isTorpedo() const;
-	bool virtual shotByAlien() const;
+	bool shotByAlien() const;
 private:
 	bool OutofBounds() const;
 	void moveProjectile();
